@@ -55,7 +55,7 @@ class _AppAboutDialogState extends State<AppAboutDialog> {
       children: [
         TextButton(
           onPressed: () {
-            IntentUtils.getUrlIntent(alistUrl).launchChooser("AList");
+            IntentUtils.getUrlIntent(alistUrl).launchChooser("AlistLite");
           },
           onLongPress: () {
             Clipboard.setData(ClipboardData(text: alistUrl));
@@ -63,11 +63,11 @@ class _AppAboutDialogState extends State<AppAboutDialog> {
                 message: S.of(context).copiedToClipboard,
                 duration: const Duration(seconds: 1)));
           },
-          child: const Text("AList"),
+          child: const Text("AlistLite"),
         ),
         TextButton(
             onPressed: () {
-              IntentUtils.getUrlIntent(appUrl).launchChooser("AListFlutter");
+              IntentUtils.getUrlIntent(appUrl).launchChooser("AListLiteATV");
             },
             onLongPress: () {
               Clipboard.setData(ClipboardData(text: appUrl));
@@ -75,7 +75,7 @@ class _AppAboutDialogState extends State<AppAboutDialog> {
                   message: S.of(context).copiedToClipboard,
                   duration: const Duration(seconds: 1)));
             },
-            child: const Text("AListFlutter")),
+            child: const Text("AListLiteATV")),
       ],
     );
   }

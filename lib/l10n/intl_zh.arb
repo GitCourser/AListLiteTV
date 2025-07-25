@@ -1,6 +1,6 @@
 {
   "@@locale": "zh",
-  "appName": "AList",
+  "appName": "AListLiteATV",
   "desktopShortcut": "桌面快捷方式",
   "setAdminPassword": "设置admin密码",
   "moreOptions": "更多选项",
@@ -32,11 +32,14 @@
   "grantStoragePermission": "申请【读写外置存储权限】",
   "grantNotificationPermission": "申请【通知权限】",
   "grantNotificationPermissionDesc": "用于前台服务保活",
-  "autoStartWebPage": "将网页设置为打开首页",
   "jumpToOtherApp": "跳转到其他APP ？",
+  "autoStartWebPage": "将网页设置为打开首页",
   "autoStartWebPageDesc": "打开主界面时的首页",
   "dataDirectory": "data 文件夹路径",
   "setDefaultDirectory": "是否设为初始目录？",
   "silentJumpApp": "静默跳转APP",
-  "silentJumpAppDesc": "跳转APP时，不弹出提示框"
+  "silentJumpAppDesc": "跳转APP时，不弹出提示框",
+  "changeAdminPassword": "修改管理员密码",
+  "changeAdminPasswordDesc": "修改AList管理员密码",
+  "passwordUpdated": "密码已更新"
 }

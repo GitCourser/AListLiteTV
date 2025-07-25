@@ -3,11 +3,10 @@ import 'dart:io';
 
 import 'package:alist_flutter/generated_api.dart';
 import 'package:alist_flutter/pages/alist/about_dialog.dart';
-import 'package:alist_flutter/pages/alist/pwd_edit_dialog.dart';
 import 'package:alist_flutter/pages/app_update_dialog.dart';
-import 'package:alist_flutter/widgets/switch_floating_action_button.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 
 import '../../generated/l10n.dart';
@@ -19,12 +18,20 @@ class AListScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // Allow auto-rotation for AList page
+    SystemChrome.setPreferredOrientations([
+      DeviceOrientation.portraitUp,
+      DeviceOrientation.portraitDown,
+      DeviceOrientation.landscapeLeft,
+      DeviceOrientation.landscapeRight,
+    ]);
+
     final ui = Get.put(AListController());
 
     return Scaffold(
         appBar: AppBar(
             backgroundColor: Theme.of(context).colorScheme.primaryContainer,
-            title: Obx(() => Text("AList - ${ui.alistVersion.value}")),
+            title: Obx(() => Text("AListLite - ${ui.alistVersion.value}")),
             actions: [
               IconButton(
                 tooltip: S.of(context).desktopShortcut,
@@ -33,21 +40,7 @@ class AListScreen extends StatelessWidget {
                 },
                 icon: const Icon(Icons.add_home),
               ),
-              IconButton(
-                tooltip: S.current.setAdminPassword,
-                onPressed: () {
-                  showDialog(
-                      context: context,
-                      builder: (context) => PwdEditDialog(onConfirm: (pwd) {
-                            Get.showSnackbar(GetSnackBar(
-                                title: S.current.setAdminPassword,
-                                message: pwd,
-                                duration: const Duration(seconds: 1)));
-                            Android().setAdminPwd(pwd);
-                          }));
-                },
-                icon: const Icon(Icons.password),
-              ),
+
               PopupMenuButton(
                 tooltip: S.of(context).moreOptions,
                 itemBuilder: (context) {
@@ -79,15 +72,7 @@ class AListScreen extends StatelessWidget {
                 icon: const Icon(Icons.more_vert),
               )
             ]),
-        floatingActionButton: Obx(
-          () => SwitchFloatingButton(
-              isSwitch: ui.isSwitch.value,
-              onSwitchChange: (s) {
-                ui.clearLog();
-                ui.isSwitch.value = s;
-                Android().startService();
-              }),
-        ),
+
         body: Obx(() => LogListView(logs: ui.logs.value)));
   }
 }
@@ -125,10 +110,22 @@ class AListController extends GetxController {
     _scrollController.jumpTo(_scrollController.position.maxScrollExtent);
   }
 
+  /// 设置事件接收器（用于重新初始化日志接收）
+  void setupEventReceiver() {
+    // 创建新的事件接收器实例
+    final newReceiver = MyEventReceiver(
+        (isRunning) => isSwitch.value = isRunning, 
+        (log) => addLog(log)
+    );
+    
+    // 重新设置事件接收器
+    Event.setup(newReceiver);
+    print('AListController事件接收器已重新设置');
+  }
+
   @override
   void onInit() {
-    Event.setup(MyEventReceiver(
-        (isRunning) => isSwitch.value = isRunning, (log) => addLog(log)));
+    setupEventReceiver();
     Android().getAListVersion().then((value) => alistVersion.value = value);
     Android().isRunning().then((value) => isSwitch.value = value);
 

@@ -3,9 +3,11 @@ import 'dart:ffi';
 
 import 'package:alist_flutter/contant/native_bridge.dart';
 import 'package:alist_flutter/generated_api.dart';
+import 'package:alist_flutter/pages/alist/pwd_edit_dialog.dart';
 import 'package:alist_flutter/pages/settings/preference_widgets.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:permission_handler/permission_handler.dart';
 
@@ -42,6 +44,14 @@ class _SettingsScreenState extends State<SettingsScreen> {
 
   @override
   Widget build(BuildContext context) {
+    // Allow auto-rotation for settings page
+    SystemChrome.setPreferredOrientations([
+      DeviceOrientation.portraitUp,
+      DeviceOrientation.portraitDown,
+      DeviceOrientation.landscapeLeft,
+      DeviceOrientation.landscapeRight,
+    ]);
+
     final controller = Get.put(_SettingsController());
     return Scaffold(
         body: Obx(
@@ -85,6 +95,25 @@ class _SettingsScreenState extends State<SettingsScreen> {
               )),
 
           DividerPreference(title: S.of(context).general),
+
+          BasicPreference(
+            title: S.of(context).setAdminPassword,
+            subtitle: "修改AList管理员密码",
+            leading: const Icon(Icons.password),
+            onTap: () {
+              showDialog(
+                context: context,
+                builder: (context) => PwdEditDialog(onConfirm: (pwd) {
+                  Get.showSnackbar(GetSnackBar(
+                    title: S.of(context).setAdminPassword,
+                    message: "密码已更新",
+                    duration: const Duration(seconds: 2),
+                  ));
+                  NativeBridge.android.setAdminPwd(pwd);
+                }),
+              );
+            },
+          ),
 
           SwitchPreference(
             title: S.of(context).autoCheckForUpdates,

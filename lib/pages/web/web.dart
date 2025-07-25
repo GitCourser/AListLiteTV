@@ -61,6 +61,14 @@ class WebScreenState extends State<WebScreen> {
 
   @override
   Widget build(BuildContext context) {
+    // Allow auto-rotation for web page
+    SystemChrome.setPreferredOrientations([
+      DeviceOrientation.portraitUp,
+      DeviceOrientation.portraitDown,
+      DeviceOrientation.landscapeLeft,
+      DeviceOrientation.landscapeRight,
+    ]);
+
     return PopScope(
         canPop: !_canGoBack,
         onPopInvoked: (didPop) async {
