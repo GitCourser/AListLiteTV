@@ -39,5 +39,10 @@
   "silentJumpAppDesc": "跳转APP时，不弹出提示框",
   "changeAdminPassword": "修改管理员密码",
   "changeAdminPasswordDesc": "修改AList管理员密码",
-  "passwordUpdated": "密码已更新"
+  "passwordUpdated": "密码已更新",
+  "themeMode": "主题模式",
+  "themeModeDesc": "选择应用的主题模式",
+  "themeModeLight": "浅色",
+  "themeModeDark": "深色",
+  "themeModeSystem": "跟随系统"
 }

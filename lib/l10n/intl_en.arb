@@ -39,5 +39,10 @@
   "silentJumpAppDesc": "Jump to other app without prompt",
   "changeAdminPassword": "Change Admin Password",
   "changeAdminPasswordDesc": "Change AList administrator password",
-  "passwordUpdated": "Password updated"
+  "passwordUpdated": "Password updated",
+  "themeMode": "Theme Mode",
+  "themeModeDesc": "Choose app theme mode",
+  "themeModeLight": "Light",
+  "themeModeDark": "Dark",
+  "themeModeSystem": "Follow System"
 }

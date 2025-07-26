@@ -79,6 +79,11 @@ class MessageLookup extends MessageLookupByLibrary {
             MessageLookupByLibrary.simpleMessage("silent jump app"),
         "silentJumpAppDesc": MessageLookupByLibrary.simpleMessage(
             "Jump to other app without prompt"),
+        "themeMode": MessageLookupByLibrary.simpleMessage("Theme Mode"),
+        "themeModeDesc": MessageLookupByLibrary.simpleMessage("Choose app theme mode"),
+        "themeModeLight": MessageLookupByLibrary.simpleMessage("Light"),
+        "themeModeDark": MessageLookupByLibrary.simpleMessage("Dark"),
+        "themeModeSystem": MessageLookupByLibrary.simpleMessage("Follow System"),
         "uiSettings": MessageLookupByLibrary.simpleMessage("UI"),
         "wakeLock": MessageLookupByLibrary.simpleMessage("Wake lock"),
         "wakeLockDesc": MessageLookupByLibrary.simpleMessage(

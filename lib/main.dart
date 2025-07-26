@@ -1,6 +1,7 @@
 import 'package:alist_flutter/generated/l10n.dart';
 import 'package:alist_flutter/pages/app_update_dialog.dart';
 import 'package:alist_flutter/pages/tv/tv_home_page.dart';
+import 'package:alist_flutter/controllers/theme_controller.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -28,12 +29,13 @@ class MyApp extends StatelessWidget {
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
-    // 初始化应用控制器
+    // 初始化应用控制器和主题控制器
     Get.put(_AppController());
+    final themeController = Get.put(ThemeController());
     
-    return GetMaterialApp(
+    return Obx(() => GetMaterialApp(
       title: 'AListLiteATV',
-      themeMode: ThemeMode.system,
+      themeMode: themeController.themeMode,
       theme: ThemeData(
         useMaterial3: true,
         colorSchemeSeed: Colors.blueGrey,
@@ -55,7 +57,7 @@ class MyApp extends StatelessWidget {
         GlobalCupertinoLocalizations.delegate,
       ],
       home: const TVHomePage(),
-    );
+    ));
   }
 }
 

@@ -33,4 +33,10 @@ object AppConfigBridge : GeneratedApi.AppConfig {
     override fun setWakeLockEnabled(enabled: Boolean) {
         AppConfig.isWakeLockEnabled = enabled
     }
+
+    override fun getThemeMode(): Long = AppConfig.themeMode.toLong()
+
+    override fun setThemeMode(mode: Long) {
+        AppConfig.themeMode = mode.toInt()
+    }
 }

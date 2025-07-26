@@ -119,7 +119,7 @@ class _TVHomePageState extends State<TVHomePage> with WidgetsBindingObserver {
         icon: Icons.settings,
         onPressed: _tvController.navigateToSettings,
         isEnabled: true,
-        iconColor: Colors.grey[600], // 灰色表示设置
+        iconColor: Colors.purple[600], // 紫色表示设置
       ),
     ];
   }
@@ -350,7 +350,7 @@ class _TVHomePageState extends State<TVHomePage> with WidgetsBindingObserver {
                                       ),
                                       const SizedBox(height: 12),
                                       Text(
-                                        '遥控器操作提示',
+                                        '操作提示',
                                         style: theme.textTheme.titleMedium?.copyWith(
                                           color: colorScheme.primary,
                                           fontWeight: FontWeight.w600,
@@ -362,7 +362,7 @@ class _TVHomePageState extends State<TVHomePage> with WidgetsBindingObserver {
                                           mainAxisAlignment: MainAxisAlignment.center,
                                           children: [
                                             Text(
-                                              '• 方向键：切换按钮\n• 确认键：执行操作\n• Tab键：顺序切换\n• 数字键1-4：快速选择\n• 返回键：退出应用\n• Home键：返回主页',
+                                              '• 方向键：切换按钮\n• 数字键：快速选择\n• 确认键：执行操作\n• 返回键：退出应用\n\n• 设置中可切换明暗主题',
                                               style: theme.textTheme.bodyMedium?.copyWith(
                                                 color: colorScheme.onSurface.withOpacity(0.8),
                                                 height: 1.5,

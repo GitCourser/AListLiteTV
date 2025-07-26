@@ -68,6 +68,11 @@ class MessageLookup extends MessageLookupByLibrary {
         "silentJumpApp": MessageLookupByLibrary.simpleMessage("静默跳转APP"),
         "silentJumpAppDesc":
             MessageLookupByLibrary.simpleMessage("跳转APP时，不弹出提示框"),
+        "themeMode": MessageLookupByLibrary.simpleMessage("主题模式"),
+        "themeModeDesc": MessageLookupByLibrary.simpleMessage("选择应用的主题模式"),
+        "themeModeLight": MessageLookupByLibrary.simpleMessage("浅色"),
+        "themeModeDark": MessageLookupByLibrary.simpleMessage("深色"),
+        "themeModeSystem": MessageLookupByLibrary.simpleMessage("跟随系统"),
         "uiSettings": MessageLookupByLibrary.simpleMessage("界面"),
         "wakeLock": MessageLookupByLibrary.simpleMessage("唤醒锁"),
         "wakeLockDesc": MessageLookupByLibrary.simpleMessage(

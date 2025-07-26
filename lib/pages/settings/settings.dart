@@ -7,6 +7,8 @@ import 'package:alist_flutter/pages/alist/pwd_edit_dialog.dart';
 import 'package:alist_flutter/pages/alist/about_dialog.dart';
 import 'package:alist_flutter/pages/app_update_dialog.dart';
 import 'package:alist_flutter/pages/settings/preference_widgets.dart';
+import 'package:alist_flutter/controllers/theme_controller.dart';
+import 'package:alist_flutter/widgets/theme_selector_dialog.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -55,6 +57,8 @@ class _SettingsScreenState extends State<SettingsScreen> {
     ]);
 
     final controller = Get.put(_SettingsController());
+    // 确保主题控制器已初始化
+    Get.put(ThemeController());
     return Scaffold(
         body: Obx(
       () => ListView(
@@ -169,6 +173,28 @@ class _SettingsScreenState extends State<SettingsScreen> {
             },
           ),
           DividerPreference(title: S.of(context).uiSettings),
+          
+          BasicPreference(
+            title: S.of(context).themeMode,
+            subtitle: S.of(context).themeModeDesc,
+            leading: const Icon(Icons.palette),
+            trailing: Obx(() {
+              final themeController = Get.find<ThemeController>();
+              return Text(
+                _getThemeModeDisplayText(context, themeController.themeMode),
+                style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                  color: Theme.of(context).colorScheme.primary,
+                ),
+              );
+            }),
+            onTap: () {
+              showDialog(
+                context: context,
+                builder: (context) => const ThemeSelectorDialog(),
+              );
+            },
+          ),
+          
           SwitchPreference(
               icon: const Icon(Icons.pan_tool_alt_outlined),
               title: S.of(context).silentJumpApp,
@@ -208,6 +234,18 @@ class _SettingsScreenState extends State<SettingsScreen> {
         ],
       ),
     ));
+  }
+
+  String _getThemeModeDisplayText(BuildContext context, ThemeMode mode) {
+    switch (mode) {
+      case ThemeMode.light:
+        return S.of(context).themeModeLight;
+      case ThemeMode.dark:
+        return S.of(context).themeModeDark;
+      case ThemeMode.system:
+      default:
+        return S.of(context).themeModeSystem;
+    }
   }
 }
 

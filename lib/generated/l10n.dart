@@ -439,6 +439,56 @@ class S {
       args: [],
     );
   }
+
+  /// `主题模式`
+  String get themeMode {
+    return Intl.message(
+      '主题模式',
+      name: 'themeMode',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `选择应用的主题模式`
+  String get themeModeDesc {
+    return Intl.message(
+      '选择应用的主题模式',
+      name: 'themeModeDesc',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `浅色`
+  String get themeModeLight {
+    return Intl.message(
+      '浅色',
+      name: 'themeModeLight',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `深色`
+  String get themeModeDark {
+    return Intl.message(
+      '深色',
+      name: 'themeModeDark',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `跟随系统`
+  String get themeModeSystem {
+    return Intl.message(
+      '跟随系统',
+      name: 'themeModeSystem',
+      desc: '',
+      args: [],
+    );
+  }
 }
 
 class AppLocalizationDelegate extends LocalizationsDelegate<S> {

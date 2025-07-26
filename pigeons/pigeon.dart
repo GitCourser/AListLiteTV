@@ -21,6 +21,10 @@ abstract class AppConfig {
   bool isSilentJumpAppEnabled();
 
   void setSilentJumpAppEnabled(bool enabled);
+
+  int getThemeMode();
+
+  void setThemeMode(int mode);
 }
 
 @HostApi()

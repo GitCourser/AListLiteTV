@@ -114,6 +114,11 @@ public class GeneratedApi {
 
     void setSilentJumpAppEnabled(@NonNull Boolean enabled);
 
+    @NonNull 
+    Long getThemeMode();
+
+    void setThemeMode(@NonNull Long mode);
+
     /** The codec used by AppConfig. */
     static @NonNull MessageCodec<Object> getCodec() {
       return new StandardMessageCodec();
@@ -338,6 +343,52 @@ public class GeneratedApi {
                 Boolean enabledArg = (Boolean) args.get(0);
                 try {
                   api.setSilentJumpAppEnabled(enabledArg);
+                  wrapped.add(0, null);
+                }
+ catch (Throwable exception) {
+                  ArrayList<Object> wrappedError = wrapError(exception);
+                  wrapped = wrappedError;
+                }
+                reply.reply(wrapped);
+              });
+        } else {
+          channel.setMessageHandler(null);
+        }
+      }
+      {
+        BasicMessageChannel<Object> channel =
+            new BasicMessageChannel<>(
+                binaryMessenger, "dev.flutter.pigeon.alist_flutter.AppConfig.getThemeMode", getCodec());
+        if (api != null) {
+          channel.setMessageHandler(
+              (message, reply) -> {
+                ArrayList<Object> wrapped = new ArrayList<Object>();
+                try {
+                  Long output = api.getThemeMode();
+                  wrapped.add(0, output);
+                }
+ catch (Throwable exception) {
+                  ArrayList<Object> wrappedError = wrapError(exception);
+                  wrapped = wrappedError;
+                }
+                reply.reply(wrapped);
+              });
+        } else {
+          channel.setMessageHandler(null);
+        }
+      }
+      {
+        BasicMessageChannel<Object> channel =
+            new BasicMessageChannel<>(
+                binaryMessenger, "dev.flutter.pigeon.alist_flutter.AppConfig.setThemeMode", getCodec());
+        if (api != null) {
+          channel.setMessageHandler(
+              (message, reply) -> {
+                ArrayList<Object> wrapped = new ArrayList<Object>();
+                ArrayList<Object> args = (ArrayList<Object>) message;
+                Number modeArg = (Number) args.get(0);
+                try {
+                  api.setThemeMode((modeArg == null) ? null : modeArg.longValue());
                   wrapped.add(0, null);
                 }
  catch (Throwable exception) {
