@@ -10,7 +10,6 @@ object AppConfigBridge : GeneratedApi.AppConfig {
     override fun isStartAtBootEnabled() = AppConfig.isStartAtBootEnabled
 
     override fun isAutoCheckUpdateEnabled() = AppConfig.isAutoCheckUpdateEnabled
-    override fun isAutoOpenWebPageEnabled() = AppConfig.isAutoOpenWebPageEnabled
     override fun getDataDir() = AppConfig.dataDir
 
     override fun setDataDir(dir: String) {
@@ -21,10 +20,6 @@ object AppConfigBridge : GeneratedApi.AppConfig {
 
     override fun setSilentJumpAppEnabled(enabled: Boolean) {
         AppConfig.isSilentJumpAppEnabled = enabled
-    }
-
-    override fun setAutoOpenWebPageEnabled(enabled: Boolean) {
-        AppConfig.isAutoOpenWebPageEnabled = enabled
     }
 
     override fun setAutoCheckUpdateEnabled(enabled: Boolean) {

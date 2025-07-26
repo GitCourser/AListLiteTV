@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
@@ -130,8 +129,8 @@ class TVController extends GetxController {
   Future<void> _updateServerUrl() async {
     try {
       if (isServiceRunning.value) {
-        final localIP = await _getLocalIPAddress();
-        serverUrl.value = '$localIP:${serverPort.value}';
+        final serverAddress = await NativeBridge.android.getServerAddress();
+        serverUrl.value = '$serverAddress:${serverPort.value}';
       } else {
         serverUrl.value = '服务未启动';
       }
@@ -141,43 +140,7 @@ class TVController extends GetxController {
     }
   }
 
-  /// 获取本地IP地址
-  Future<String> _getLocalIPAddress() async {
-    try {
-      final interfaces = await NetworkInterface.list(
-        type: InternetAddressType.IPv4,
-        includeLinkLocal: false,
-      );
-      
-      // 优先选择WiFi接口
-      for (final interface in interfaces) {
-        if (interface.name.toLowerCase().contains('wlan') ||
-            interface.name.toLowerCase().contains('wifi')) {
-          for (final addr in interface.addresses) {
-            if (addr.type == InternetAddressType.IPv4 && !addr.isLoopback) {
-              return addr.address;
-            }
-          }
-        }
-      }
-      
-      // 选择其他非回环接口
-      for (final interface in interfaces) {
-        for (final addr in interface.addresses) {
-          if (addr.type == InternetAddressType.IPv4 && 
-              !addr.isLoopback && 
-              !addr.address.startsWith('169.254')) {
-            return addr.address;
-          }
-        }
-      }
-      
-      return '127.0.0.1';
-    } catch (e) {
-      print('获取本地IP地址失败: $e');
-      return '127.0.0.1';
-    }
-  }
+
 
   // ========== 焦点导航方法 ==========
   

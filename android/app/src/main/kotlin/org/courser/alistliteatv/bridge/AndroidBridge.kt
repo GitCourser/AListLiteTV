@@ -14,16 +14,6 @@ import org.courser.alistliteatv.utils.ToastUtils.toast
 import org.courser.pigeon.GeneratedApi
 
 class AndroidBridge(private val context: Context) : GeneratedApi.Android {
-    override fun addShortcut() {
-        MyTools.addShortcut(
-            context,
-            context.getString(R.string.app_switch),
-            "alist_flutter_switch",
-            R.drawable.alist_switch,
-            Intent(context, SwitchServerActivity::class.java)
-        )
-    }
-
     override fun startService() {
         context.startService(Intent(context, AListService::class.java))
     }
@@ -40,4 +30,14 @@ class AndroidBridge(private val context: Context) : GeneratedApi.Android {
 
 
     override fun getAListVersion() = BuildConfig.ALIST_VERSION
+
+    override fun getServerAddress(): String {
+        return try {
+            // 调用 alist-lib 中的 GetOutboundIPString 函数
+            alistlib.Alistlib.getOutboundIPString()
+        } catch (e: Exception) {
+            // 如果调用失败，返回默认值
+            "127.0.0.1"
+        }
+    }
 }

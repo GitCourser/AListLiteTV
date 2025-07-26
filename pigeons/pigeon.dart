@@ -51,6 +51,8 @@ abstract class Android {
   bool isRunning();
 
   String getAListVersion();
+
+  String getServerAddress();
 }
 
 @FlutterApi()
