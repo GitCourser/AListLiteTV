@@ -1,9 +1,8 @@
 {
   "@@locale": "en",
   "appName": "AListLiteATV",
-  "desktopShortcut": "Desktop shortcut",
+
   "setAdminPassword": "Set admin password",
-  "moreOptions": "More options",
   "checkForUpdates": "Check for updates",
   "currentIsLatestVersion": "Current is latest version",
   "confirm": "OK",
@@ -33,8 +32,7 @@
   "grantStoragePermission": "Grant 【external storage】 permission",
   "grantNotificationPermission": "Grant 【Notification】 permission",
   "grantNotificationPermissionDesc": "Used for foreground service keep alive",
-  "autoStartWebPage": "将网页设置为打开首页",
-  "autoStartWebPageDesc": "打开主界面时的首页",
+
   "dataDirectory": "data Directory",
   "setDefaultDirectory": "Set as default directory?",
   "silentJumpApp": "silent jump app",

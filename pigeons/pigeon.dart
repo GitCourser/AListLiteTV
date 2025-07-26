@@ -14,10 +14,6 @@ abstract class AppConfig {
 
   void setAutoCheckUpdateEnabled(bool enabled);
 
-  bool isAutoOpenWebPageEnabled();
-
-  void setAutoOpenWebPageEnabled(bool enabled);
-
   String getDataDir();
 
   void setDataDir(String dir);
@@ -46,8 +42,6 @@ abstract class NativeCommon {
 
 @HostApi()
 abstract class Android {
-  void addShortcut();
-
   void startService();
 
   void setAdminPwd(String pwd);

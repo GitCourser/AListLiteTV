@@ -9,6 +9,7 @@ class TVButton extends StatefulWidget {
   final bool isEnabled;
   final bool isFocused;
   final VoidCallback? onFocusChange;
+  final Color? iconColor; // 新增：自定义图标颜色
 
   const TVButton({
     super.key,
@@ -18,6 +19,7 @@ class TVButton extends StatefulWidget {
     this.isEnabled = true,
     this.isFocused = false,
     this.onFocusChange,
+    this.iconColor, // 新增：自定义图标颜色参数
   });
 
   @override
@@ -100,9 +102,10 @@ class _TVButtonState extends State<TVButton> {
                   widget.icon,
                   size: 36,
                   color: widget.isEnabled
-                      ? (widget.isFocused 
-                          ? colorScheme.primary 
-                          : colorScheme.onSurface)
+                      ? (widget.iconColor ?? // 优先使用自定义颜色
+                          (widget.isFocused 
+                              ? colorScheme.primary 
+                              : colorScheme.onSurface))
                       : colorScheme.onSurface.withOpacity(0.4),
                 ),
                 const SizedBox(height: 8),
@@ -138,11 +141,13 @@ class TVButtonData {
   final IconData icon;
   final VoidCallback? onPressed;
   final bool isEnabled;
+  final Color? iconColor; // 新增：自定义图标颜色
 
   const TVButtonData({
     required this.title,
     required this.icon,
     this.onPressed,
     this.isEnabled = true,
+    this.iconColor, // 新增：自定义图标颜色参数
   });
 }

@@ -33,9 +33,6 @@ class TVController extends GetxController {
   // 事件接收器
   MyEventReceiver? _eventReceiver;
   
-  // 定时器
-  Timer? _statusTimer;
-
   @override
   void onInit() {
     super.onInit();
@@ -44,7 +41,6 @@ class TVController extends GetxController {
 
   @override
   void onClose() {
-    _statusTimer?.cancel();
     _eventReceiver = null;
     
     // 清理页面状态
@@ -67,8 +63,7 @@ class TVController extends GetxController {
       // 获取初始状态
       await _loadInitialData();
       
-      // 开始定期状态检查
-      _startStatusTimer();
+
       
       // 设置智能焦点管理
       _setupSmartFocusManagement();
@@ -85,11 +80,13 @@ class TVController extends GetxController {
     _eventReceiver = MyEventReceiver(
       (isRunning) {
         isServiceRunning.value = isRunning;
+        isServiceStarting.value = false;
         if (isRunning) {
-          isServiceStarting.value = false;
           serviceError.value = '';
-          _updateServerUrl();
         }
+        // 立即更新服务器URL
+        _updateServerUrl();
+        print('服务状态已更新: ${isRunning ? "运行中" : "已停止"}');
       },
       (log) {
         // 添加日志到列表
@@ -129,27 +126,12 @@ class TVController extends GetxController {
     }
   }
 
-  /// 开始定期状态检查
-  void _startStatusTimer() {
-    _statusTimer = Timer.periodic(const Duration(seconds: 3), (timer) async {
-      try {
-        final running = await NativeBridge.android.isRunning();
-        if (isServiceRunning.value != running) {
-          isServiceRunning.value = running;
-          await _updateServerUrl();
-        }
-      } catch (e) {
-        print('状态检查失败: $e');
-      }
-    });
-  }
-
   /// 更新服务器URL
   Future<void> _updateServerUrl() async {
     try {
       if (isServiceRunning.value) {
         final localIP = await _getLocalIPAddress();
-        serverUrl.value = 'http://$localIP:${serverPort.value}';
+        serverUrl.value = '$localIP:${serverPort.value}';
       } else {
         serverUrl.value = '服务未启动';
       }
@@ -372,74 +354,42 @@ class TVController extends GetxController {
     }
   }
 
-  /// 等待服务状态变化
+  /// 等待服务状态变化（简化版本，主要依赖事件接收器）
   Future<void> _waitForServiceStatusChange() async {
-    int attempts = 0;
-    const maxAttempts = 15; // 增加等待时间
-    bool initialState = isServiceRunning.value;
+    // 等待一小段时间让原生服务处理请求
+    await Future.delayed(const Duration(milliseconds: 800));
     
-    while (attempts < maxAttempts) {
-      await Future.delayed(const Duration(milliseconds: 500));
-      
+    // 如果事件接收器还没有更新状态，手动检查一次
+    if (isServiceStarting.value) {
       try {
         final running = await NativeBridge.android.isRunning();
-        
-        // 更新实际状态
         isServiceRunning.value = running;
+        isServiceStarting.value = false;
+        await _updateServerUrl();
         
-        // 检查是否有状态变化或达到预期状态
-        if (running != initialState || attempts >= 5) {
-          isServiceStarting.value = false;
-          await _updateServerUrl();
-          
-          // 显示状态消息
-          final message = running ? '服务启动成功' : '服务已停止';
-          final bgColor = running 
-              ? Get.theme.colorScheme.primaryContainer
-              : Get.theme.colorScheme.surfaceVariant;
-              
-          Get.showSnackbar(GetSnackBar(
-            message: message,
-            duration: const Duration(seconds: 2),
-            backgroundColor: bgColor,
-          ));
-          return;
-        }
-        
+        // 显示状态消息
+        final message = running ? '服务启动成功' : '服务已停止';
+        final bgColor = running 
+            ? Get.theme.colorScheme.primaryContainer
+            : Get.theme.colorScheme.surfaceVariant;
+            
+        Get.showSnackbar(GetSnackBar(
+          message: message,
+          duration: const Duration(seconds: 2),
+          backgroundColor: bgColor,
+        ));
       } catch (e) {
         print('检查服务状态失败: $e');
         serviceError.value = '状态检查失败: $e';
+        isServiceStarting.value = false;
         
-        // 如果连续失败，提前退出
-        if (attempts > 5) {
-          break;
-        }
+        Get.showSnackbar(GetSnackBar(
+          message: '服务操作可能失败: $e',
+          duration: const Duration(seconds: 3),
+          backgroundColor: Get.theme.colorScheme.errorContainer,
+        ));
       }
-      
-      attempts++;
     }
-    
-    // 超时或失败处理
-    isServiceStarting.value = false;
-    
-    if (serviceError.value.isEmpty) {
-      serviceError.value = '服务状态检查超时';
-    }
-    
-    Get.showSnackbar(GetSnackBar(
-      message: serviceError.value.isNotEmpty 
-          ? serviceError.value 
-          : '服务状态检查超时，请手动刷新',
-      duration: const Duration(seconds: 3),
-      backgroundColor: Get.theme.colorScheme.errorContainer,
-    ));
-  }
-
-  /// 清除日志（集成原有AListController的clearLog方法）
-  /// 注意：当前设置为不清除日志，保留所有历史记录
-  void _clearLogs() {
-    // logs.clear(); // 注释掉清除操作，保留所有日志
-    print('保留所有服务日志，不进行清除');
   }
 
   /// 添加日志（集成原有AListController的addLog方法）
@@ -503,10 +453,19 @@ class TVController extends GetxController {
     }
   }
 
-  /// 强制刷新服务状态
+  /// 强制刷新服务状态（仅在必要时使用）
   Future<void> refreshServiceStatus() async {
     try {
-      await _loadInitialData();
+      // 只获取初始状态，不依赖定时器
+      final running = await NativeBridge.android.isRunning();
+      isServiceRunning.value = running;
+      
+      final port = await NativeBridge.android.getAListHttpPort();
+      serverPort.value = port;
+      
+      await _updateServerUrl();
+      
+      print('服务状态已手动刷新: ${running ? "运行中" : "已停止"}');
     } catch (e) {
       print('刷新服务状态失败: $e');
       serviceError.value = '刷新失败: $e';
@@ -660,29 +619,6 @@ class TVController extends GetxController {
     currentPageIndex.value = 0;
   }
 
-  /// 保持页面状态和数据一致性
-  void maintainPageState() {
-    // 刷新当前页面的数据状态
-    switch (currentPageIndex.value) {
-      case 0: // TV主页
-        refreshServiceStatus();
-        break;
-      case 1: // 网页页面
-        // 网页页面状态由WebScreen自己管理
-        break;
-      case 2: // 日志页面
-        // 日志数据已经通过事件接收器实时更新
-        break;
-      case 3: // 设置页面
-        // 设置页面状态由SettingsScreen自己管理
-        break;
-    }
-  }
-
-  // ========== 键盘事件处理 ==========
-
-  // ========== 键盘事件处理 ==========
-
   /// 处理键盘事件（简化版本，立即响应）
   bool handleKeyEvent(KeyEvent event) {
     // 只处理按键按下事件，忽略重复和释放事件以避免多次触发
@@ -777,7 +713,7 @@ class TVController extends GetxController {
     Get.dialog(
       AlertDialog(
         title: const Text('退出应用'),
-        content: const Text('确定要退出AList TV吗？'),
+        content: const Text('确定要退出AList Lite TV吗？'),
         actions: [
           TextButton(
             onPressed: () => Get.back(),

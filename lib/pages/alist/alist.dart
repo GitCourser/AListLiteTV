@@ -2,8 +2,6 @@ import 'dart:developer';
 import 'dart:io';
 
 import 'package:alist_flutter/generated_api.dart';
-import 'package:alist_flutter/pages/alist/about_dialog.dart';
-import 'package:alist_flutter/pages/app_update_dialog.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -31,47 +29,7 @@ class AListScreen extends StatelessWidget {
     return Scaffold(
         appBar: AppBar(
             backgroundColor: Theme.of(context).colorScheme.primaryContainer,
-            title: Obx(() => Text("AListLite - ${ui.alistVersion.value}")),
-            actions: [
-              IconButton(
-                tooltip: S.of(context).desktopShortcut,
-                onPressed: () async  {
-                  Android().addShortcut();
-                },
-                icon: const Icon(Icons.add_home),
-              ),
-
-              PopupMenuButton(
-                tooltip: S.of(context).moreOptions,
-                itemBuilder: (context) {
-                  return [
-                    PopupMenuItem(
-                      value: 1,
-                      onTap: () async {
-                        AppUpdateDialog.checkUpdateAndShowDialog(context, (b) {
-                          if (!b) {
-                            Get.showSnackbar(GetSnackBar(
-                                message: S.of(context).currentIsLatestVersion,
-                                duration: const Duration(seconds: 2)));
-                          }
-                        });
-                      },
-                      child: Text(S.of(context).checkForUpdates),
-                    ),
-                    PopupMenuItem(
-                      value: 2,
-                      onTap: () {
-                        showDialog(context: context, builder: ((context){
-                          return const AppAboutDialog();
-                        }));
-                      },
-                      child: Text(S.of(context).about),
-                    ),
-                  ];
-                },
-                icon: const Icon(Icons.more_vert),
-              )
-            ]),
+            title: Obx(() => Text("AListLite - ${ui.alistVersion.value}"))),
 
         body: Obx(() => LogListView(logs: ui.logs.value)));
   }

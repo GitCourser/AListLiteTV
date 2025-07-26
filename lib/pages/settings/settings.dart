@@ -4,6 +4,8 @@ import 'dart:ffi';
 import 'package:alist_flutter/contant/native_bridge.dart';
 import 'package:alist_flutter/generated_api.dart';
 import 'package:alist_flutter/pages/alist/pwd_edit_dialog.dart';
+import 'package:alist_flutter/pages/alist/about_dialog.dart';
+import 'package:alist_flutter/pages/app_update_dialog.dart';
 import 'package:alist_flutter/pages/settings/preference_widgets.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
@@ -142,16 +144,6 @@ class _SettingsScreenState extends State<SettingsScreen> {
               controller.startAtBoot = value;
             },
           ),
-          // AutoStartWebPage
-          SwitchPreference(
-            title: S.of(context).autoStartWebPage,
-            subtitle: S.of(context).autoStartWebPageDesc,
-            icon: const Icon(Icons.open_in_browser),
-            value: controller._autoStartWebPage.value,
-            onChanged: (value) {
-              controller.autoStartWebPage = value;
-            },
-          ),
 
           BasicPreference(
             title: S.of(context).dataDirectory,
@@ -184,7 +176,35 @@ class _SettingsScreenState extends State<SettingsScreen> {
               value: controller._silentJumpApp.value,
               onChanged: (value) {
                 controller.silentJumpApp = value;
-              })
+              }),
+          
+          DividerPreference(title: S.of(context).about),
+          
+          BasicPreference(
+            title: S.of(context).checkForUpdates,
+            subtitle: "检查应用更新",
+            leading: const Icon(Icons.system_update),
+            onTap: () async {
+              AppUpdateDialog.checkUpdateAndShowDialog(context, (b) {
+                if (!b) {
+                  Get.showSnackbar(GetSnackBar(
+                      message: S.of(context).currentIsLatestVersion,
+                      duration: const Duration(seconds: 2)));
+                }
+              });
+            },
+          ),
+          
+          BasicPreference(
+            title: S.of(context).about,
+            subtitle: "关于应用",
+            leading: const Icon(Icons.info),
+            onTap: () {
+              showDialog(context: context, builder: ((context){
+                return const AppAboutDialog();
+              }));
+            },
+          ),
         ],
       ),
     ));
@@ -230,14 +250,7 @@ class _SettingsController extends GetxController {
 
   get startAtBoot => _autoStart.value;
 
-  final _autoStartWebPage = false.obs;
 
-  set autoStartWebPage(value) => {
-        _autoStartWebPage.value = value,
-        NativeBridge.appConfig.setAutoOpenWebPageEnabled(value)
-      };
-
-  get autoStartWebPage => _autoStartWebPage.value;
 
   final _silentJumpApp = false.obs;
 
@@ -260,7 +273,6 @@ class _SettingsController extends GetxController {
     cfg.isAutoCheckUpdateEnabled().then((value) => autoUpdate = value);
     cfg.isWakeLockEnabled().then((value) => wakeLock = value);
     cfg.isStartAtBootEnabled().then((value) => startAtBoot = value);
-    cfg.isAutoOpenWebPageEnabled().then((value) => autoStartWebPage = value);
     cfg.isSilentJumpAppEnabled().then((value) => silentJumpApp = value);
 
     _dataDir.value = await cfg.getDataDir();
