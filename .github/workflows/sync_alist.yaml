@@ -49,6 +49,6 @@ jobs:
       - name: Run workflow release
         if: env.alist_update == 1 && ( success() || failure() )
         run: |
-          gh workflow run release.yaml -R GitCourser/AListLiteATV
+          gh workflow run release.yaml -R GitCourser/AListLiteTV
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  

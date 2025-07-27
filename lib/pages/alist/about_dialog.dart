@@ -43,7 +43,7 @@ class _AppAboutDialogState extends State<AppAboutDialog> {
     final alistUrl =
         "https://github.com/GitCourser/AlistLite/releases/tag/$_alistVersion";
     final appUrl =
-        "https://github.com/GitCourser/AListLiteATV/releases/tag/$_version";
+        "https://github.com/GitCourser/AListLiteTV/releases/tag/$_version";
     return AboutDialog(
       applicationName: S.of(context).appName,
       applicationVersion: '$_version ($_versionCode)',
@@ -67,7 +67,7 @@ class _AppAboutDialogState extends State<AppAboutDialog> {
         ),
         TextButton(
             onPressed: () {
-              IntentUtils.getUrlIntent(appUrl).launchChooser("AListLiteATV");
+              IntentUtils.getUrlIntent(appUrl).launchChooser("AListLiteTV");
             },
             onLongPress: () {
               Clipboard.setData(ClipboardData(text: appUrl));
@@ -75,7 +75,7 @@ class _AppAboutDialogState extends State<AppAboutDialog> {
                   message: S.of(context).copiedToClipboard,
                   duration: const Duration(seconds: 1)));
             },
-            child: const Text("AListLiteATV")),
+            child: const Text("AListLiteTV")),
       ],
     );
   }

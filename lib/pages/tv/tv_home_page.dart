@@ -5,9 +5,6 @@ import 'package:alist_flutter/controllers/tv_controller.dart';
 import 'package:alist_flutter/widgets/tv/tv_button.dart';
 import 'package:alist_flutter/widgets/tv/server_info_panel.dart';
 import 'package:alist_flutter/generated/l10n.dart';
-import 'package:alist_flutter/pages/web/web.dart';
-import 'package:alist_flutter/pages/alist/alist.dart';
-import 'package:alist_flutter/pages/settings/settings.dart';
 
 /// TV主页面，提供左右分栏布局：左半部分为2x2按钮，右半部分分为服务器信息二维码和操作提示
 class TVHomePage extends StatefulWidget {
@@ -26,10 +23,7 @@ class _TVHomePageState extends State<TVHomePage> with WidgetsBindingObserver {
     super.initState();
     
     // 强制横屏显示
-    SystemChrome.setPreferredOrientations([
-      DeviceOrientation.landscapeLeft,
-      DeviceOrientation.landscapeRight,
-    ]);
+    _forceSetLandscapeOrientation();
     
     // 初始化控制器
     _tvController = Get.put(TVController());
@@ -52,6 +46,17 @@ class _TVHomePageState extends State<TVHomePage> with WidgetsBindingObserver {
   }
 
   @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    
+    // 每次页面依赖变化时（包括从其他页面返回时）强制设置横屏
+    if (mounted) {
+      _forceSetLandscapeOrientation();
+      print('TV主页面依赖变化，已强制设置横屏');
+    }
+  }
+
+  @override
   void dispose() {
     WidgetsBinding.instance.removeObserver(this);
     _keyboardFocusNode.dispose();
@@ -64,10 +69,11 @@ class _TVHomePageState extends State<TVHomePage> with WidgetsBindingObserver {
     
     switch (state) {
       case AppLifecycleState.resumed:
-        // 应用恢复时，确保焦点正确
+        // 应用恢复时，确保横屏方向和焦点正确
         if (mounted && _tvController.isOnTVHomePage()) {
+          _forceSetLandscapeOrientation();
           _keyboardFocusNode.requestFocus();
-          print('应用恢复，TV主页面焦点已恢复');
+          print('应用恢复，TV主页面横屏和焦点已恢复');
         }
         break;
       case AppLifecycleState.paused:
@@ -77,6 +83,14 @@ class _TVHomePageState extends State<TVHomePage> with WidgetsBindingObserver {
       default:
         break;
     }
+  }
+
+  /// 强制设置横屏方向
+  void _forceSetLandscapeOrientation() {
+    SystemChrome.setPreferredOrientations([
+      DeviceOrientation.landscapeLeft,
+      DeviceOrientation.landscapeRight,
+    ]);
   }
 
   /// 处理键盘事件

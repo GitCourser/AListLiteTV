@@ -508,6 +508,11 @@ class TVController extends GetxController {
       )?.then((_) {
         // 页面返回时恢复状态
         _onPageReturned();
+        
+        // 如果返回到TV主页面，确保横屏方向
+        if (currentPageIndex.value == 0) {
+          _ensureTVHomePageOrientation();
+        }
       });
       
       print('导航到${pageNames[pageIndex]}页面');
@@ -523,6 +528,9 @@ class TVController extends GetxController {
       
       // 返回到主页面
       Get.until((route) => route.isFirst);
+      
+      // 确保横屏方向
+      _ensureTVHomePageOrientation();
       
       print('返回TV主页面');
       
@@ -542,6 +550,11 @@ class TVController extends GetxController {
       currentPageIndex.value = previousPageIndex;
       
       Get.back();
+      
+      // 如果返回到TV主页面，确保横屏方向
+      if (previousPageIndex == 0) {
+        _ensureTVHomePageOrientation();
+      }
       
       print('返回到${pageNames[previousPageIndex]}页面');
     } else {
@@ -580,6 +593,18 @@ class TVController extends GetxController {
   void clearPageHistory() {
     pageHistory.clear();
     currentPageIndex.value = 0;
+  }
+
+  /// 确保TV主页面的横屏方向
+  void _ensureTVHomePageOrientation() {
+    // 延迟一小段时间确保页面完全加载后再设置方向
+    Future.delayed(const Duration(milliseconds: 100), () {
+      SystemChrome.setPreferredOrientations([
+        DeviceOrientation.landscapeLeft,
+        DeviceOrientation.landscapeRight,
+      ]);
+      print('已确保TV主页面横屏方向');
+    });
   }
 
   /// 处理键盘事件（简化版本，立即响应）
@@ -650,8 +675,8 @@ class TVController extends GetxController {
   /// 处理返回键
   bool _handleBackKey() {
     if (isOnTVHomePage()) {
-      // 在TV主页面，显示退出确认
-      _showExitConfirmation();
+      // 在TV主页面，直接返回桌面
+      SystemNavigator.pop();
       return true;
     } else {
       // 在其他页面时返回TV主页
@@ -669,30 +694,6 @@ class TVController extends GetxController {
     _executeCurrentButton();
     
     print('执行按钮操作: ${getCurrentFocusedButtonName()}');
-  }
-
-  /// 显示退出确认对话框
-  void _showExitConfirmation() {
-    Get.dialog(
-      AlertDialog(
-        title: const Text('退出应用'),
-        content: const Text('确定要退出AList Lite TV吗？'),
-        actions: [
-          TextButton(
-            onPressed: () => Get.back(),
-            child: const Text('取消'),
-          ),
-          TextButton(
-            onPressed: () {
-              Get.back();
-              SystemNavigator.pop(); // 退出应用
-            },
-            child: const Text('退出'),
-          ),
-        ],
-      ),
-      barrierDismissible: false,
-    );
   }
 
   /// 设置智能焦点管理

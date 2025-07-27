@@ -34,7 +34,7 @@ class MyApp extends StatelessWidget {
     final themeController = Get.put(ThemeController());
     
     return Obx(() => GetMaterialApp(
-      title: 'AListLiteATV',
+      title: 'AListLiteTV',
       themeMode: themeController.themeMode,
       theme: ThemeData(
         useMaterial3: true,

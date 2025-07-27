@@ -20,7 +20,7 @@ def gitCommits = gitCountText ? Integer.parseInt(gitCountText) : 1
 def alistVersion = rootProject.file('../alist_version').readLines()[0]
 
 android {
-    namespace 'org.courser.alistliteatv'
+    namespace 'org.courser.alistlitetv'
     compileSdkVersion 34
     ndkVersion '25.1.8937393'
 
@@ -35,7 +35,7 @@ android {
 
     defaultConfig {
         // TODO: Specify your own unique Application ID (https://developer.android.com/studio/build/application-id.html).
-        applicationId 'org.courser.alistliteatv'
+        applicationId 'org.courser.alistlitetv'
         // You can update the following values to match your application needs.
         // For more information, see: https://docs.flutter.dev/deployment/android#reviewing-the-gradle-build-configuration.
         minSdkVersion flutter.minSdkVersion
@@ -86,9 +86,9 @@ android {
             //noinspection GrDeprecatedAPIUsage
             def abiName = output.getFilter(com.android.build.OutputFile.ABI)
             if (abiName == null)
-                output.outputFileName = "AListLiteATV-${variant.versionName}.apk"
+                output.outputFileName = "AListLiteTV-${variant.versionName}.apk"
             else
-                output.outputFileName = "AListLiteATV-${variant.versionName}_${abiName}.apk"
+                output.outputFileName = "AListLiteTV-${variant.versionName}_${abiName}.apk"
         }
     }
 
@@ -107,7 +107,7 @@ android {
             ndk {
                 // noinspection ChromeOsAbiSupport
                 // abiFilters "arm64-v8a"
-                // abiFilters 'x86_64'
+                // abiFilters 'x86_64', 'arm64-v8a'
             }
         }
     }

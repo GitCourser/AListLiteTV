@@ -27,10 +27,10 @@
         tools:ignore="ScopedStorage" />
 
     <application
-        android:name="org.courser.alistliteatv.App"
+        android:name="org.courser.alistlitetv.App"
         android:icon="@mipmap/ic_launcher"
 
-        android:label="AListLiteATV"
+        android:label="AListLiteTV"
         android:networkSecurityConfig="@xml/network_security_config"
         android:requestLegacyExternalStorage="true"
         android:roundIcon="@mipmap/ic_launcher"

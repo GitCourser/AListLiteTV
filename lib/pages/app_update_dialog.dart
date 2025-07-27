@@ -19,7 +19,7 @@ class AppUpdateDialog extends StatelessWidget {
 
   static checkUpdateAndShowDialog(
       BuildContext context, ValueChanged<bool>? checkFinished) async {
-    final checker = UpdateChecker(owner: "GitCourser", repo: "AListLiteATV");
+    final checker = UpdateChecker(owner: "GitCourser", repo: "AListLiteTV");
     await checker.downloadData();
     checker.hasNewVersion().then((value) {
       checkFinished?.call(value);
