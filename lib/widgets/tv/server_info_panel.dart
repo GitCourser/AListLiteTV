@@ -94,15 +94,15 @@ class ServerInfoPanel extends StatelessWidget {
                     ? QrImageView(
                         data: 'http://${controller.serverUrl.value}',
                         version: QrVersions.auto,
-                        size: 185,
+                        size: 200,
                         backgroundColor: Colors.white,
                         foregroundColor: Colors.black,
                         errorCorrectionLevel: QrErrorCorrectLevel.M,
                         padding: const EdgeInsets.all(4), // 减小二维码本身的白边
                       )
                     : Container(
-                        width: 185,
-                        height: 185,
+                        width: 200,
+                        height: 200,
                         decoration: BoxDecoration(
                           color: colorScheme.surfaceVariant.withOpacity(0.3),
                           borderRadius: BorderRadius.circular(8),

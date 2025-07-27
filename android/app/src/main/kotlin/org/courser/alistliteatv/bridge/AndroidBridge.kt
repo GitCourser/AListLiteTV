@@ -26,6 +26,18 @@ class AndroidBridge(private val context: Context) : GeneratedApi.Android {
         return AList.getHttpPort().toLong()
     }
 
+    override fun setAListHttpPort(port: Long) {
+        AList.setHttpPort(port.toInt())
+    }
+
+    override fun getAListDelayedStart(): Long {
+        return AList.getDelayedStart().toLong()
+    }
+
+    override fun setAListDelayedStart(seconds: Long) {
+        AList.setDelayedStart(seconds.toInt())
+    }
+
     override fun isRunning() = AListService.isRunning
 
 

@@ -33,8 +33,9 @@ class WebScreenState extends State<WebScreen> {
   );
 
   double _progress = 0;
-  String _url = "http://localhost:5244";
+  String? _url; // 不设置默认值，完全依赖配置
   bool _canGoBack = false;
+  bool _isInitialized = false;
 
   onClickNavigationBar() {
     log("onClickNavigationBar");
@@ -43,14 +44,26 @@ class WebScreenState extends State<WebScreen> {
 
   @override
   void initState() {
-    Android()
-        .getAListHttpPort()
-        .then((port) => {_url = "http://localhost:$port"});
-
-    // NativeEvent().addServiceStatusListener((isRunning) {
-    //   if (isRunning) _webViewController?.reload();
-    // });
     super.initState();
+    _initializeUrl();
+  }
+
+  Future<void> _initializeUrl() async {
+    try {
+      final port = await Android().getAListHttpPort();
+      setState(() {
+        _url = "http://localhost:$port";
+        _isInitialized = true;
+      });
+      log("WebView URL initialized from config: $_url");
+    } catch (e) {
+      log("Failed to get AList HTTP port: $e");
+      // 如果获取配置失败，显示错误状态而不是使用默认端口
+      setState(() {
+        _url = null; // 设置为null表示加载失败
+        _isInitialized = true;
+      });
+    }
   }
 
   @override
@@ -85,9 +98,9 @@ class WebScreenState extends State<WebScreen> {
               valueColor: const AlwaysStoppedAnimation<Color>(Colors.blue),
             ),
             Expanded(
-              child: InAppWebView(
+              child: _isInitialized ? (_url != null ? InAppWebView(
                 initialSettings: settings,
-                initialUrlRequest: URLRequest(url: WebUri(_url)),
+                initialUrlRequest: URLRequest(url: WebUri(_url!)),
                 onWebViewCreated: (InAppWebViewController controller) {
                   _webViewController = controller;
                 },
@@ -197,8 +210,50 @@ class WebScreenState extends State<WebScreen> {
                 },
                 onUpdateVisitedHistory: (InAppWebViewController controller,
                     WebUri? url, bool? isReload) {
-                  _url = url.toString();
+                  if (url != null) {
+                    _url = url.toString();
+                  }
                 },
+              ) : Center(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    const Icon(
+                      Icons.error_outline,
+                      size: 64,
+                      color: Colors.red,
+                    ),
+                    const SizedBox(height: 16),
+                    Text(
+                      '无法获取端口配置',
+                      style: Theme.of(context).textTheme.titleMedium,
+                    ),
+                    const SizedBox(height: 8),
+                    Text(
+                      '请检查AList配置或重启应用',
+                      style: Theme.of(context).textTheme.bodyMedium,
+                    ),
+                    const SizedBox(height: 16),
+                    ElevatedButton(
+                      onPressed: () {
+                        setState(() {
+                          _isInitialized = false;
+                        });
+                        _initializeUrl();
+                      },
+                      child: const Text('重试'),
+                    ),
+                  ],
+                ),
+              )) : const Center(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    CircularProgressIndicator(),
+                    SizedBox(height: 16),
+                    Text('正在加载端口配置...'),
+                  ],
+                ),
               ),
             ),
           ]),

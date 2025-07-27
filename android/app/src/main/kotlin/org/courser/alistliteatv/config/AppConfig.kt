@@ -21,7 +21,7 @@ object AppConfig {
         fallback = false
     )
 
-    var themeMode: Int by prefs.dynamic("themeMode", fallback = 2) // 默认跟随系统
+    var themeMode: Int by prefs.dynamic("themeMode", fallback = 1) // 默认主题
 
     val defaultDataDir by lazy { app.getExternalFilesDir("data")?.absolutePath!! }
 

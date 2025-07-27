@@ -4,10 +4,12 @@ import 'dart:ffi';
 import 'package:alist_flutter/contant/native_bridge.dart';
 import 'package:alist_flutter/generated_api.dart';
 import 'package:alist_flutter/pages/alist/pwd_edit_dialog.dart';
+import 'package:alist_flutter/pages/alist/number_input_dialog.dart';
 import 'package:alist_flutter/pages/alist/about_dialog.dart';
 import 'package:alist_flutter/pages/app_update_dialog.dart';
 import 'package:alist_flutter/pages/settings/preference_widgets.dart';
 import 'package:alist_flutter/controllers/theme_controller.dart';
+import 'package:alist_flutter/controllers/tv_controller.dart';
 import 'package:alist_flutter/widgets/theme_selector_dialog.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
@@ -100,7 +102,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                 },
               )),
 
-          DividerPreference(title: S.of(context).general),
+          DividerPreference(title: S.of(context).alistConfig),
 
           BasicPreference(
             title: S.of(context).setAdminPassword,
@@ -120,6 +122,81 @@ class _SettingsScreenState extends State<SettingsScreen> {
               );
             },
           ),
+
+          BasicPreference(
+            title: S.of(context).httpPort,
+            subtitle: S.of(context).httpPortDesc,
+            leading: const Icon(Icons.network_check),
+            trailing: Text(
+              controller.httpPort.toString(),
+              style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                color: Theme.of(context).colorScheme.primary,
+              ),
+            ),
+            onTap: () {
+              showDialog(
+                context: context,
+                builder: (context) => NumberInputDialog(
+                  title: S.of(context).httpPort,
+                  labelText: S.of(context).httpPort,
+                  initialValue: controller.httpPort,
+                  minValue: 1024,
+                  maxValue: 65535,
+                  onConfirm: (value) {
+                    controller.httpPort = value;
+                    
+                    // 通知TVController刷新端口信息
+                    try {
+                      final tvController = Get.find<TVController>();
+                      tvController.refreshServiceStatus();
+                    } catch (e) {
+                      // TVController可能不存在，忽略错误
+                    }
+                    
+                    Get.showSnackbar(GetSnackBar(
+                      title: S.of(context).httpPort,
+                      message: S.of(context).configUpdated,
+                      duration: const Duration(seconds: 2),
+                    ));
+                  },
+                ),
+              );
+            },
+          ),
+
+          BasicPreference(
+            title: S.of(context).delayedStart,
+            subtitle: S.of(context).delayedStartDesc,
+            leading: const Icon(Icons.timer),
+            trailing: Text(
+              "${controller.delayedStart}s",
+              style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                color: Theme.of(context).colorScheme.primary,
+              ),
+            ),
+            onTap: () {
+              showDialog(
+                context: context,
+                builder: (context) => NumberInputDialog(
+                  title: S.of(context).delayedStart,
+                  labelText: S.of(context).delayedStart,
+                  initialValue: controller.delayedStart,
+                  minValue: 0,
+                  maxValue: 999999,
+                  onConfirm: (value) {
+                    controller.delayedStart = value;
+                    Get.showSnackbar(GetSnackBar(
+                      title: S.of(context).delayedStart,
+                      message: S.of(context).configUpdated,
+                      duration: const Duration(seconds: 2),
+                    ));
+                  },
+                ),
+              );
+            },
+          ),
+
+          DividerPreference(title: S.of(context).general),
 
           SwitchPreference(
             title: S.of(context).autoCheckForUpdates,
@@ -255,6 +332,10 @@ class _SettingsController extends GetxController {
   final _managerStorageGranted = true.obs;
   final _notificationGranted = true.obs;
   final _storageGranted = true.obs;
+  
+  // AList配置相关的响应式变量
+  final _httpPort = 5244.obs;
+  final _delayedStart = 0.obs;
 
   setDataDir(String value) async {
     NativeBridge.appConfig.setDataDir(value);
@@ -299,6 +380,22 @@ class _SettingsController extends GetxController {
         NativeBridge.appConfig.setSilentJumpAppEnabled(value)
       };
 
+  // AList HTTP端口的getter和setter
+  int get httpPort => _httpPort.value;
+
+  set httpPort(int value) {
+    _httpPort.value = value;
+    NativeBridge.android.setAListHttpPort(value);
+  }
+
+  // AList延时启动的getter和setter
+  int get delayedStart => _delayedStart.value;
+
+  set delayedStart(int value) {
+    _delayedStart.value = value;
+    NativeBridge.android.setAListDelayedStart(value);
+  }
+
   @override
   void onInit() async {
     updateData();
@@ -314,6 +411,17 @@ class _SettingsController extends GetxController {
     cfg.isSilentJumpAppEnabled().then((value) => silentJumpApp = value);
 
     _dataDir.value = await cfg.getDataDir();
+
+    // 初始化AList配置数据
+    try {
+      _httpPort.value = await NativeBridge.android.getAListHttpPort();
+      _delayedStart.value = await NativeBridge.android.getAListDelayedStart();
+    } catch (e) {
+      log('Failed to load AList configuration: $e');
+      // 使用默认值
+      _httpPort.value = 5244;
+      _delayedStart.value = 0;
+    }
 
     final sdk = await NativeBridge.common.getDeviceSdkInt();
     // A11

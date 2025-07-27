@@ -44,5 +44,18 @@
   "themeModeDesc": "Choose app theme mode",
   "themeModeLight": "Light",
   "themeModeDark": "Dark",
-  "themeModeSystem": "Follow System"
+  "themeModeSystem": "Follow System",
+
+  "alistConfig": "AList Configuration",
+  "httpPort": "HTTP Port",
+  "httpPortDesc": "HTTP port number for AList server",
+  "delayedStart": "Delayed Start",
+  "delayedStartDesc": "AList server startup delay (seconds)",
+  "invalidPortNumber": "Invalid port number",
+  "portRangeError": "Port number must be between 1024-65535",
+  "invalidDelayTime": "Invalid delay time",
+  "delayTimeError": "Delay time must be 0 or positive integer",
+  "configUpdated": "Configuration updated",
+  "enterValue": "Enter Value",
+  "currentValue": "Current Value"
 }

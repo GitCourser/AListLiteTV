@@ -103,4 +103,22 @@ object AList : Event, LogCallback {
     fun getHttpPort(): Int {
         return AListConfigManager.config().scheme.httpPort
     }
+
+    fun setHttpPort(port: Int) {
+        val config = AListConfigManager.config()
+        val updatedConfig = config.copy(
+            scheme = config.scheme.copy(httpPort = port)
+        )
+        AListConfigManager.update(updatedConfig)
+    }
+
+    fun getDelayedStart(): Int {
+        return AListConfigManager.config().delayedStart
+    }
+
+    fun setDelayedStart(seconds: Int) {
+        val config = AListConfigManager.config()
+        val updatedConfig = config.copy(delayedStart = seconds)
+        AListConfigManager.update(updatedConfig)
+    }
 }

@@ -88,6 +88,18 @@ class MessageLookup extends MessageLookupByLibrary {
         "wakeLock": MessageLookupByLibrary.simpleMessage("Wake lock"),
         "wakeLockDesc": MessageLookupByLibrary.simpleMessage(
             "Prevent CPU from sleeping when screen is off. (May cause app killed in background on some devices)"),
-        "webPage": MessageLookupByLibrary.simpleMessage("Web Page")
+        "webPage": MessageLookupByLibrary.simpleMessage("Web Page"),
+        "alistConfig": MessageLookupByLibrary.simpleMessage("AList Configuration"),
+        "httpPort": MessageLookupByLibrary.simpleMessage("HTTP Port"),
+        "httpPortDesc": MessageLookupByLibrary.simpleMessage("HTTP port number for AList server"),
+        "delayedStart": MessageLookupByLibrary.simpleMessage("Delayed Start"),
+        "delayedStartDesc": MessageLookupByLibrary.simpleMessage("AList server startup delay (seconds)"),
+        "invalidPortNumber": MessageLookupByLibrary.simpleMessage("Invalid port number"),
+        "portRangeError": MessageLookupByLibrary.simpleMessage("Port number must be between 1024-65535"),
+        "invalidDelayTime": MessageLookupByLibrary.simpleMessage("Invalid delay time"),
+        "delayTimeError": MessageLookupByLibrary.simpleMessage("Delay time must be 0 or positive integer"),
+        "configUpdated": MessageLookupByLibrary.simpleMessage("Configuration updated"),
+        "enterValue": MessageLookupByLibrary.simpleMessage("Enter Value"),
+        "currentValue": MessageLookupByLibrary.simpleMessage("Current Value")
       };
 }

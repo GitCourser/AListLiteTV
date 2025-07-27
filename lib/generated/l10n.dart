@@ -489,6 +489,126 @@ class S {
       args: [],
     );
   }
+
+  /// `AList配置`
+  String get alistConfig {
+    return Intl.message(
+      'AList配置',
+      name: 'alistConfig',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `HTTP端口`
+  String get httpPort {
+    return Intl.message(
+      'HTTP端口',
+      name: 'httpPort',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `AList服务器的HTTP端口号`
+  String get httpPortDesc {
+    return Intl.message(
+      'AList服务器的HTTP端口号',
+      name: 'httpPortDesc',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `延时启动`
+  String get delayedStart {
+    return Intl.message(
+      '延时启动',
+      name: 'delayedStart',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `AList服务器启动延时（秒）用在你TV/盒子启动比路由器快的时候...`
+  String get delayedStartDesc {
+    return Intl.message(
+      'AList服务器启动延时（秒）用在你TV/盒子启动比路由器快的时候...',
+      name: 'delayedStartDesc',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `无效的端口号`
+  String get invalidPortNumber {
+    return Intl.message(
+      '无效的端口号',
+      name: 'invalidPortNumber',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `端口号必须在1024-65535之间`
+  String get portRangeError {
+    return Intl.message(
+      '端口号必须在1024-65535之间',
+      name: 'portRangeError',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `无效的延时时间`
+  String get invalidDelayTime {
+    return Intl.message(
+      '无效的延时时间',
+      name: 'invalidDelayTime',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `延时时间必须为0或正整数`
+  String get delayTimeError {
+    return Intl.message(
+      '延时时间必须为0或正整数',
+      name: 'delayTimeError',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `配置已更新`
+  String get configUpdated {
+    return Intl.message(
+      '配置已更新',
+      name: 'configUpdated',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `输入数值`
+  String get enterValue {
+    return Intl.message(
+      '输入数值',
+      name: 'enterValue',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `当前值`
+  String get currentValue {
+    return Intl.message(
+      '当前值',
+      name: 'currentValue',
+      desc: '',
+      args: [],
+    );
+  }
 }
 
 class AppLocalizationDelegate extends LocalizationsDelegate<S> {

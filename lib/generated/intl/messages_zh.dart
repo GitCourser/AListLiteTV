@@ -77,6 +77,18 @@ class MessageLookup extends MessageLookupByLibrary {
         "wakeLock": MessageLookupByLibrary.simpleMessage("唤醒锁"),
         "wakeLockDesc": MessageLookupByLibrary.simpleMessage(
             "开启防止锁屏后CPU休眠，保持进程在后台运行。（部分系统可能导致杀后台）"),
-        "webPage": MessageLookupByLibrary.simpleMessage("网页")
+        "webPage": MessageLookupByLibrary.simpleMessage("网页"),
+        "alistConfig": MessageLookupByLibrary.simpleMessage("AList配置"),
+        "httpPort": MessageLookupByLibrary.simpleMessage("HTTP端口"),
+        "httpPortDesc": MessageLookupByLibrary.simpleMessage("AList服务器的HTTP端口号"),
+        "delayedStart": MessageLookupByLibrary.simpleMessage("延时启动"),
+        "delayedStartDesc": MessageLookupByLibrary.simpleMessage("AList服务器启动延时（秒）用在你TV/盒子启动比路由器快的时候..."),
+        "invalidPortNumber": MessageLookupByLibrary.simpleMessage("无效的端口号"),
+        "portRangeError": MessageLookupByLibrary.simpleMessage("端口号必须在1024-65535之间"),
+        "invalidDelayTime": MessageLookupByLibrary.simpleMessage("无效的延时时间"),
+        "delayTimeError": MessageLookupByLibrary.simpleMessage("延时时间必须为0或正整数"),
+        "configUpdated": MessageLookupByLibrary.simpleMessage("配置已更新"),
+        "enterValue": MessageLookupByLibrary.simpleMessage("输入数值"),
+        "currentValue": MessageLookupByLibrary.simpleMessage("当前值")
       };
 }

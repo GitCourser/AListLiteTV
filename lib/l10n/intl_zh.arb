@@ -44,5 +44,18 @@
   "themeModeDesc": "选择应用的主题模式",
   "themeModeLight": "浅色",
   "themeModeDark": "深色",
-  "themeModeSystem": "跟随系统"
+  "themeModeSystem": "跟随系统",
+
+  "alistConfig": "AList配置",
+  "httpPort": "HTTP端口",
+  "httpPortDesc": "AList服务器的HTTP端口号",
+  "delayedStart": "延时启动",
+  "delayedStartDesc": "AList服务器启动延时（秒）用在你TV/盒子启动比路由器快的时候...",
+  "invalidPortNumber": "无效的端口号",
+  "portRangeError": "端口号必须在1024-65535之间",
+  "invalidDelayTime": "无效的延时时间",
+  "delayTimeError": "延时时间必须为0或正整数",
+  "configUpdated": "配置已更新",
+  "enterValue": "输入数值",
+  "currentValue": "当前值"
 }

@@ -319,7 +319,7 @@ class _TVHomePageState extends State<TVHomePage> with WidgetsBindingObserver {
                         ),
                       ),
                       
-                      const SizedBox(width: 20),
+                      // const SizedBox(width: 20),
                       
                       // 操作提示
                       Expanded(
@@ -331,7 +331,7 @@ class _TVHomePageState extends State<TVHomePage> with WidgetsBindingObserver {
                             LayoutBuilder(
                               builder: (context, constraints) {
                                 return Container(
-                                  height: 390, // 设置固定高度匹配ServerInfoPanel
+                                  height: 405, // 设置固定高度匹配ServerInfoPanel
                                   padding: const EdgeInsets.all(20),
                                   decoration: BoxDecoration(
                                     color: colorScheme.surfaceVariant.withOpacity(0.5),
@@ -362,7 +362,7 @@ class _TVHomePageState extends State<TVHomePage> with WidgetsBindingObserver {
                                           mainAxisAlignment: MainAxisAlignment.center,
                                           children: [
                                             Text(
-                                              '• 方向键：切换按钮\n• 数字键：快速选择\n• 确认键：执行操作\n• 返回键：退出应用\n\n• 设置中可切换明暗主题',
+                                              '• 方向键：切换按钮\n\n• 数字键：快速选择\n\n• 确认键：执行操作\n\n• 返回键：返回桌面\n\n\n• 设置中可切换主题',
                                               style: theme.textTheme.bodyMedium?.copyWith(
                                                 color: colorScheme.onSurface.withOpacity(0.8),
                                                 height: 1.5,

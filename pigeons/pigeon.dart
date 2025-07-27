@@ -52,6 +52,12 @@ abstract class Android {
 
   int getAListHttpPort();
 
+  void setAListHttpPort(int port);
+
+  int getAListDelayedStart();
+
+  void setAListDelayedStart(int seconds);
+
   bool isRunning();
 
   String getAListVersion();
