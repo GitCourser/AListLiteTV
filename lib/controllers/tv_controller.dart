@@ -23,7 +23,6 @@ class TVController extends GetxController {
   
   // 服务器信息相关
   final serverUrl = ''.obs;
-  final serverPort = 5244.obs;
   final alistVersion = ''.obs;
   
   // 日志管理
@@ -56,16 +55,14 @@ class TVController extends GetxController {
       currentPageIndex.value = 0; // 确保从TV主页开始
       pageHistory.clear();
       
+      // 设置默认焦点到启动按钮（仅在初始化时设置一次）
+      currentFocusIndex.value = 0;
+      
       // 设置事件接收器
       _setupEventReceiver();
       
       // 获取初始状态
       await _loadInitialData();
-      
-
-      
-      // 设置智能焦点管理
-      _setupSmartFocusManagement();
       
       print('TVController初始化完成，当前页面: ${getCurrentPageName()}');
     } catch (e) {
@@ -113,10 +110,6 @@ class TVController extends GetxController {
       final running = await NativeBridge.android.isRunning();
       isServiceRunning.value = running;
       
-      // 获取端口号
-      final port = await NativeBridge.android.getAListHttpPort();
-      serverPort.value = port;
-      
       // 更新服务器URL
       await _updateServerUrl();
     } catch (e) {
@@ -130,7 +123,8 @@ class TVController extends GetxController {
     try {
       if (isServiceRunning.value) {
         final serverAddress = await NativeBridge.android.getServerAddress();
-        serverUrl.value = '$serverAddress:${serverPort.value}';
+        final serverPort = await NativeBridge.android.getAListHttpPort();
+        serverUrl.value = '$serverAddress:${serverPort}';
       } else {
         serverUrl.value = '服务未启动';
       }
@@ -140,10 +134,7 @@ class TVController extends GetxController {
     }
   }
 
-
-
   // ========== 焦点导航方法 ==========
-  
   // 2x2网格布局映射：
   // 0: 启动按钮 (行0, 列0)  1: 网页按钮 (行0, 列1)
   // 2: 日志按钮 (行1, 列0)  3: 设置按钮 (行1, 列1)
@@ -245,39 +236,10 @@ class TVController extends GetxController {
     }
   }
 
-  /// 重置焦点到默认位置（启动按钮）
+  /// 重置焦点到默认位置（启动按钮）- 仅在初始化时使用
   void resetFocusToDefault() {
     _setFocusDirectly(0);
-  }
-
-  /// 智能焦点移动（根据按钮状态选择最佳焦点）
-  void smartFocusMove() {
-    // 如果当前按钮不可用，移动到下一个可用按钮
-    if (!_isButtonEnabled(currentFocusIndex.value)) {
-      for (int i = 0; i < buttonCount; i++) {
-        final nextIndex = (currentFocusIndex.value + i + 1) % buttonCount;
-        if (_isButtonEnabled(nextIndex)) {
-          _setFocusDirectly(nextIndex);
-          break;
-        }
-      }
-    }
-  }
-
-  /// 检查按钮是否可用
-  bool _isButtonEnabled(int index) {
-    switch (index) {
-      case 0: // 启动按钮
-        return !isServiceStarting.value;
-      case 1: // 网页按钮
-        return isServiceRunning.value;
-      case 2: // 日志按钮
-        return true;
-      case 3: // 设置按钮
-        return true;
-      default:
-        return false;
-    }
+    print('焦点已重置到默认位置（启动按钮）');
   }
 
   // ========== 服务控制方法 ==========
@@ -417,23 +379,23 @@ class TVController extends GetxController {
   }
 
   /// 强制刷新服务状态（仅在必要时使用）
-  Future<void> refreshServiceStatus() async {
-    try {
-      // 只获取初始状态，不依赖定时器
-      final running = await NativeBridge.android.isRunning();
-      isServiceRunning.value = running;
+  // Future<void> refreshServiceStatus() async {
+  //   try {
+  //     // 只获取初始状态，不依赖定时器
+  //     final running = await NativeBridge.android.isRunning();
+  //     isServiceRunning.value = running;
       
-      final port = await NativeBridge.android.getAListHttpPort();
-      serverPort.value = port;
+  //     final port = await NativeBridge.android.getAListHttpPort();
+  //     serverPort.value = port;
       
-      await _updateServerUrl();
+  //     await _updateServerUrl();
       
-      print('服务状态已手动刷新: ${running ? "运行中" : "已停止"}');
-    } catch (e) {
-      print('刷新服务状态失败: $e');
-      serviceError.value = '刷新失败: $e';
-    }
-  }
+  //     print('服务状态已手动刷新: ${running ? "运行中" : "已停止"}');
+  //   } catch (e) {
+  //     print('刷新服务状态失败: $e');
+  //     serviceError.value = '刷新失败: $e';
+  //   }
+  // }
 
   // ========== 页面导航和状态管理 ==========
   
@@ -555,7 +517,6 @@ class TVController extends GetxController {
       if (previousPageIndex == 0) {
         _ensureTVHomePageOrientation();
       }
-      
       print('返回到${pageNames[previousPageIndex]}页面');
     } else {
       // 没有历史记录，返回TV主页
@@ -570,7 +531,6 @@ class TVController extends GetxController {
     } else {
       currentPageIndex.value = 0; // 返回TV主页
     }
-    
     print('页面返回，当前页面: ${pageNames[currentPageIndex.value]}');
   }
 
@@ -694,25 +654,6 @@ class TVController extends GetxController {
     _executeCurrentButton();
     
     print('执行按钮操作: ${getCurrentFocusedButtonName()}');
-  }
-
-  /// 设置智能焦点管理
-  void _setupSmartFocusManagement() {
-    // 监听服务状态变化，自动调整焦点
-    ever(isServiceRunning, (bool running) {
-      // 当服务状态改变时，检查当前焦点按钮是否仍然可用
-      if (!_isButtonEnabled(currentFocusIndex.value)) {
-        smartFocusMove();
-      }
-    });
-    
-    // 监听服务启动状态变化
-    ever(isServiceStarting, (bool starting) {
-      // 当服务启动状态改变时，检查焦点
-      if (!_isButtonEnabled(currentFocusIndex.value)) {
-        smartFocusMove();
-      }
-    });
   }
 
   /// 执行当前焦点按钮的操作

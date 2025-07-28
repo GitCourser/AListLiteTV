@@ -120,7 +120,7 @@ class AListService : Service(), AList.Listener {
         if (isRunning) {
             AList.shutdown()
         } else {
-            toast(getString(R.string.starting))
+            // toast(getString(R.string.starting))
             isRunning = true
             AList.startup()
             notifyStatusChanged()

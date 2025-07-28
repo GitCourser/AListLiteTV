@@ -3,10 +3,10 @@ import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:alist_flutter/controllers/tv_controller.dart';
 import 'package:alist_flutter/widgets/tv/tv_button.dart';
-import 'package:alist_flutter/widgets/tv/server_info_panel.dart';
+import 'package:alist_flutter/widgets/tv/qr_code_panel.dart';
 import 'package:alist_flutter/generated/l10n.dart';
 
-/// TV主页面，提供左右分栏布局：左半部分为2x2按钮，右半部分分为服务器信息二维码和操作提示
+/// TV主页面，采用响应式布局，分为上、中、下三部分
 class TVHomePage extends StatefulWidget {
   const TVHomePage({super.key});
 
@@ -69,11 +69,11 @@ class _TVHomePageState extends State<TVHomePage> with WidgetsBindingObserver {
     
     switch (state) {
       case AppLifecycleState.resumed:
-        // 应用恢复时，确保横屏方向和焦点正确
+        // 应用恢复时，确保横屏方向
         if (mounted && _tvController.isOnTVHomePage()) {
           _forceSetLandscapeOrientation();
           _keyboardFocusNode.requestFocus();
-          print('应用恢复，TV主页面横屏和焦点已恢复');
+          print('应用恢复，TV主页面横屏');
         }
         break;
       case AppLifecycleState.paused:
@@ -103,7 +103,7 @@ class _TVHomePageState extends State<TVHomePage> with WidgetsBindingObserver {
     return [
       // 启动按钮 (索引 0)
       TVButtonData(
-        title: _tvController.isServiceRunning.value ? '停止服务' : '启动服务',
+        title: _tvController.isServiceRunning.value ? '停止' : '启动',
         icon: _tvController.isServiceRunning.value ? Icons.stop : Icons.play_arrow,
         onPressed: _tvController.toggleService,
         isEnabled: !_tvController.isServiceStarting.value,
@@ -142,262 +142,268 @@ class _TVHomePageState extends State<TVHomePage> with WidgetsBindingObserver {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
-    
+
     return KeyboardListener(
       focusNode: _keyboardFocusNode,
       onKeyEvent: _handleKeyEvent,
       child: Scaffold(
         backgroundColor: colorScheme.surface,
         body: SafeArea(
-          child: Padding(
-            padding: const EdgeInsets.all(24.0),
-            child: Row(
-              children: [
-                // 左半部分：按钮区域
-                Expanded(
-                  flex: 1,
+          child: Center(
+            child: ConstrainedBox(
+              constraints: const BoxConstraints(maxWidth: 1600),
+              child: AspectRatio(
+                aspectRatio: 16 / 9,
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 24),
                   child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      // 标题
-                      Text(
-                        'AList Lite TV',
-                        style: theme.textTheme.headlineLarge?.copyWith(
-                          color: colorScheme.primary,
-                          fontWeight: FontWeight.bold,
+                      // 上：标题
+                      Padding(
+                        padding: const EdgeInsets.only(top: 16),
+                        child: Text(
+                          'AList Lite TV',
+                          style: theme.textTheme.headlineLarge?.copyWith(
+                            color: colorScheme.primary,
+                            fontWeight: FontWeight.bold,
+                          ),
                         ),
                       ),
-                      const SizedBox(height: 40),
-                      
-                      // 2x2按钮网格
-                      Obx(() {
-                        final buttonData = _getButtonData();
-                        return Column(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            // 第一行按钮
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                              children: [
-                                // 启动按钮
-                                Flexible(
-                                  child: TVButton(
-                                    title: buttonData[0].title,
-                                    icon: buttonData[0].icon,
-                                    onPressed: buttonData[0].onPressed,
-                                    isEnabled: buttonData[0].isEnabled,
-                                    isFocused: _tvController.isFocused(0),
-                                    onFocusChange: () => _tvController.setFocus(0),
-                                    iconColor: buttonData[0].iconColor,
-                                  ),
-                                ),
-                                const SizedBox(width: 20),
-                                // 网页按钮
-                                Flexible(
-                                  child: TVButton(
-                                    title: buttonData[1].title,
-                                    icon: buttonData[1].icon,
-                                    onPressed: buttonData[1].onPressed,
-                                    isEnabled: buttonData[1].isEnabled,
-                                    isFocused: _tvController.isFocused(1),
-                                    onFocusChange: () => _tvController.setFocus(1),
-                                    iconColor: buttonData[1].iconColor,
-                                  ),
-                                ),
-                              ],
-                            ),
-                            const SizedBox(height: 28),
-                            // 第二行按钮
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                              children: [
-                                // 日志按钮
-                                Flexible(
-                                  child: TVButton(
-                                    title: buttonData[2].title,
-                                    icon: buttonData[2].icon,
-                                    onPressed: buttonData[2].onPressed,
-                                    isEnabled: buttonData[2].isEnabled,
-                                    isFocused: _tvController.isFocused(2),
-                                    onFocusChange: () => _tvController.setFocus(2),
-                                    iconColor: buttonData[2].iconColor,
-                                  ),
-                                ),
-                                const SizedBox(width: 20),
-                                // 设置按钮
-                                Flexible(
-                                  child: TVButton(
-                                    title: buttonData[3].title,
-                                    icon: buttonData[3].icon,
-                                    onPressed: buttonData[3].onPressed,
-                                    isEnabled: buttonData[3].isEnabled,
-                                    isFocused: _tvController.isFocused(3),
-                                    onFocusChange: () => _tvController.setFocus(3),
-                                    iconColor: buttonData[3].iconColor,
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ],
-                        );
-                      }),
-                      
-                      const SizedBox(height: 32),
-                      
-                      // 服务状态指示器
-                      Obx(() => Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-                        decoration: BoxDecoration(
-                          color: _tvController.isServiceRunning.value
-                              ? colorScheme.primaryContainer
-                              : colorScheme.errorContainer,
-                          borderRadius: BorderRadius.circular(20),
-                        ),
+                      const Spacer(flex: 1),
+                      // 中：核心交互区
+                      Expanded(
+                        flex: 12,
                         child: Row(
-                          mainAxisSize: MainAxisSize.min,
+                          crossAxisAlignment: CrossAxisAlignment.stretch,
                           children: [
-                            if (_tvController.isServiceStarting.value)
-                              SizedBox(
-                                width: 16,
-                                height: 16,
-                                child: CircularProgressIndicator(
-                                  strokeWidth: 2,
-                                  color: colorScheme.primary,
+                                // 按钮区 (50%)
+                                Expanded(
+                                  flex: 5,
+                                  child: Obx(() {
+                                    final buttonData = _getButtonData();
+                                    return Column(
+                                      children: [
+                                        // 上排按钮
+                                        Expanded(
+                                          flex: 3, // 增加按钮高度
+                                          child: Row(
+                                            children: [
+                                              // 启动按钮
+                                              Expanded(
+                                                child: TVButton(
+                                                  title: buttonData[0].title,
+                                                  icon: buttonData[0].icon,
+                                                  onPressed: buttonData[0].onPressed,
+                                                  isEnabled: buttonData[0].isEnabled,
+                                                  isFocused: _tvController.isFocused(0),
+                                                  onFocusChange: () => _tvController.setFocus(0),
+                                                  iconColor: buttonData[0].iconColor,
+                                                ),
+                                              ),
+                                              const SizedBox(width: 20),
+                                              // 网页按钮
+                                              Expanded(
+                                                child: TVButton(
+                                                  title: buttonData[1].title,
+                                                  icon: buttonData[1].icon,
+                                                  onPressed: buttonData[1].onPressed,
+                                                  isEnabled: buttonData[1].isEnabled,
+                                                  isFocused: _tvController.isFocused(1),
+                                                  onFocusChange: () => _tvController.setFocus(1),
+                                                  iconColor: buttonData[1].iconColor,
+                                                ),
+                                              ),
+                                            ],
+                                          ),
+                                        ),
+                                        const Spacer(),
+                                        // 下排按钮
+                                        Expanded(
+                                          flex: 3, // 增加按钮高度
+                                          child: Row(
+                                            children: [
+                                              // 日志按钮
+                                              Expanded(
+                                                child: TVButton(
+                                                  title: buttonData[2].title,
+                                                  icon: buttonData[2].icon,
+                                                  onPressed: buttonData[2].onPressed,
+                                                  isEnabled: buttonData[2].isEnabled,
+                                                  isFocused: _tvController.isFocused(2),
+                                                  onFocusChange: () => _tvController.setFocus(2),
+                                                  iconColor: buttonData[2].iconColor,
+                                                ),
+                                              ),
+                                              const SizedBox(width: 20),
+                                              // 设置按钮
+                                              Expanded(
+                                                child: TVButton(
+                                                  title: buttonData[3].title,
+                                                  icon: buttonData[3].icon,
+                                                  onPressed: buttonData[3].onPressed,
+                                                  isEnabled: buttonData[3].isEnabled,
+                                                  isFocused: _tvController.isFocused(3),
+                                                  onFocusChange: () => _tvController.setFocus(3),
+                                                  iconColor: buttonData[3].iconColor,
+                                                ),
+                                              ),
+                                            ],
+                                          ),
+                                        ),
+                                      ],
+                                    );
+                                  }),
                                 ),
-                              )
-                            else
-                              Icon(
-                                _tvController.isServiceRunning.value
-                                    ? Icons.check_circle
-                                    : Icons.error,
-                                size: 16,
-                                color: _tvController.isServiceRunning.value
-                                    ? colorScheme.primary
-                                    : colorScheme.error,
-                              ),
-                            const SizedBox(width: 8),
-                            Text(
-                              _tvController.isServiceStarting.value
-                                  ? (_tvController.isServiceRunning.value ? '正在停止...' : '正在启动...')
-                                  : (_tvController.isServiceRunning.value ? '服务运行中' : '服务已停止'),
-                              style: theme.textTheme.bodyMedium?.copyWith(
-                                color: _tvController.isServiceRunning.value
-                                    ? colorScheme.primary
-                                    : colorScheme.error,
-                                fontWeight: FontWeight.w500,
-                              ),
-                            ),
-                          ],
-                        ),
-                      )),
-                      
-                      // 错误信息显示
-                      Obx(() => _tvController.serviceError.value.isNotEmpty
-                          ? Padding(
-                              padding: const EdgeInsets.only(top: 16),
-                              child: Container(
-                                padding: const EdgeInsets.all(12),
-                                decoration: BoxDecoration(
-                                  color: colorScheme.errorContainer,
-                                  borderRadius: BorderRadius.circular(8),
+                                const SizedBox(width: 20),
+
+                                // 二维码区 (30%)
+                                const Expanded(
+                                  flex: 3,
+                                  child: QRCodePanel(),
                                 ),
-                                child: Text(
-                                  _tvController.serviceError.value,
-                                  style: theme.textTheme.bodySmall?.copyWith(
-                                    color: colorScheme.error,
-                                  ),
-                                  textAlign: TextAlign.center,
-                                ),
-                              ),
-                            )
-                          : const SizedBox.shrink()),
-                    ],
-                  ),
-                ),
-                
-                const SizedBox(width: 32),
-                
-                // 右半部分：服务器信息和操作提示
-                Expanded(
-                  flex: 1,
-                  child: Row(
-                    children: [
-                      // 服务器信息和二维码
-                      Expanded(
-                        flex: 1,
-                        child: const Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            ServerInfoPanel(),
-                          ],
-                        ),
-                      ),
-                      
-                      // const SizedBox(width: 20),
-                      
-                      // 操作提示
-                      Expanded(
-                        flex: 1,
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            // 操作提示容器，高度匹配ServerInfoPanel
-                            LayoutBuilder(
-                              builder: (context, constraints) {
-                                return Container(
-                                  height: 405, // 设置固定高度匹配ServerInfoPanel
-                                  padding: const EdgeInsets.all(20),
-                                  decoration: BoxDecoration(
-                                    color: colorScheme.surfaceVariant.withOpacity(0.5),
-                                    borderRadius: BorderRadius.circular(16),
-                                    border: Border.all(
-                                      color: colorScheme.outline.withOpacity(0.2),
+                                const SizedBox(width: 20),
+
+                                // 操作提示区 (20%)
+                                Expanded(
+                                  flex: 2,
+                                  child: Container(
+                                    padding: const EdgeInsets.all(12),
+                                    decoration: BoxDecoration(
+                                      color: colorScheme.surfaceVariant.withOpacity(0.5),
+                                      borderRadius: BorderRadius.circular(16),
+                                      border: Border.all(
+                                        color: colorScheme.outline.withOpacity(0.2),
+                                      ),
+                                    ),
+                                    child: FittedBox(
+                                      fit: BoxFit.contain,
+                                      child: Column(
+                                        mainAxisAlignment: MainAxisAlignment.center,
+                                        crossAxisAlignment: CrossAxisAlignment.center,
+                                        children: [
+                                          Icon(
+                                            Icons.info_outline,
+                                            color: colorScheme.primary,
+                                          ),
+                                          const SizedBox(height: 12),
+                                          Text(
+                                            '操作提示',
+                                            style: theme.textTheme.titleMedium
+                                                ?.copyWith(
+                                              color: colorScheme.primary,
+                                              fontWeight: FontWeight.w500,
+                                            ),
+                                          ),
+                                          const SizedBox(height: 16),
+                                          Text(
+                                            '• 方向键：切换按钮\n• 数字键：快速选择\n• 确认键：执行操作\n• 返回键：返回桌面\n• 设置中可切换主题',
+                                            style: theme.textTheme.bodyMedium
+                                                ?.copyWith(
+                                              color: colorScheme.onSurface
+                                                  .withOpacity(0.8),
+                                              height: 1.5,
+                                            ),
+                                            textAlign: TextAlign.left,
+                                          ),
+                                        ],
+                                      ),
                                     ),
                                   ),
-                                  child: Column(
-                                    mainAxisAlignment: MainAxisAlignment.center,
-                                    children: [
-                                      Icon(
-                                        Icons.info_outline,
-                                        color: colorScheme.primary,
-                                        size: 28,
-                                      ),
-                                      const SizedBox(height: 12),
-                                      Text(
-                                        '操作提示',
-                                        style: theme.textTheme.titleMedium?.copyWith(
-                                          color: colorScheme.primary,
-                                          fontWeight: FontWeight.w600,
-                                        ),
-                                      ),
-                                      const SizedBox(height: 16),
-                                      Expanded(
-                                        child: Column(
-                                          mainAxisAlignment: MainAxisAlignment.center,
-                                          children: [
-                                            Text(
-                                              '• 方向键：切换按钮\n\n• 数字键：快速选择\n\n• 确认键：执行操作\n\n• 返回键：返回桌面\n\n\n• 设置中可切换主题',
-                                              style: theme.textTheme.bodyMedium?.copyWith(
-                                                color: colorScheme.onSurface.withOpacity(0.8),
-                                                height: 1.5,
-                                              ),
-                                              textAlign: TextAlign.left,
-                                            ),
-                                          ],
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                );
-                              },
-                            ),
+                                ),
                           ],
                         ),
+                      ),
+                      const Spacer(flex: 1),
+                      // 下：服务状态
+                      Padding(
+                        padding: const EdgeInsets.only(bottom: 16),
+                        child: Obx(() {
+                          final isRunning = _tvController.isServiceRunning.value;
+                          final isStarting =
+                              _tvController.isServiceStarting.value;
+                          final serverUrl = _tvController.serverUrl.value;
+                          final error = _tvController.serviceError.value;
+
+                          String statusText;
+                          if (isStarting) {
+                            statusText =
+                                isRunning ? '正在停止...' : '正在启动...';
+                          } else {
+                            statusText =
+                                isRunning ? '服务运行中' : '服务已停止';
+                          }
+                          if (isRunning && !isStarting) {
+                            statusText += ' @ $serverUrl';
+                            Clipboard.setData(ClipboardData(text: 'http://$serverUrl'));
+                          }
+
+                          return Column(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Container(
+                                padding: const EdgeInsets.symmetric(
+                                    horizontal: 16, vertical: 8),
+                                decoration: BoxDecoration(
+                                  color: isRunning
+                                      ? colorScheme.primaryContainer
+                                      : colorScheme.errorContainer,
+                                  borderRadius: BorderRadius.circular(20),
+                                ),
+                                child: Row(
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: [
+                                    if (isStarting)
+                                      SizedBox(
+                                        width: 16,
+                                        height: 16,
+                                        child: CircularProgressIndicator(
+                                          strokeWidth: 2,
+                                          color: colorScheme.primary,
+                                        ),
+                                      )
+                                    else
+                                      Icon(
+                                        isRunning
+                                            ? Icons.check_circle
+                                            : Icons.error,
+                                        size: 16,
+                                        color: isRunning
+                                            ? colorScheme.primary
+                                            : colorScheme.error,
+                                      ),
+                                    const SizedBox(width: 8),
+                                    Text(
+                                      statusText,
+                                      style:
+                                          theme.textTheme.bodyMedium?.copyWith(
+                                        color: isRunning
+                                            ? colorScheme.primary
+                                            : colorScheme.error,
+                                        fontWeight: FontWeight.w500,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                              if (error.isNotEmpty)
+                                Padding(
+                                  padding: const EdgeInsets.only(top: 16),
+                                  child: Text(
+                                    error,
+                                    style: theme.textTheme.bodySmall?.copyWith(
+                                      color: colorScheme.error,
+                                    ),
+                                    textAlign: TextAlign.center,
+                                  ),
+                                ),
+                            ],
+                          );
+                        }),
                       ),
                     ],
                   ),
                 ),
-              ],
+              ),
             ),
           ),
         ),

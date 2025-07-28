@@ -148,7 +148,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                     // 通知TVController刷新端口信息
                     try {
                       final tvController = Get.find<TVController>();
-                      tvController.refreshServiceStatus();
+                      // tvController.refreshServiceStatus();
                     } catch (e) {
                       // TVController可能不存在，忽略错误
                     }

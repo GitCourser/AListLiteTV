@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
-/// TV优化的按钮组件，支持焦点状态和遥控器导航（简化版本）
+/// TV优化的按钮组件，支持焦点状态和遥控器导航
 class TVButton extends StatefulWidget {
   final String title;
   final IconData icon;
@@ -9,7 +9,7 @@ class TVButton extends StatefulWidget {
   final bool isEnabled;
   final bool isFocused;
   final VoidCallback? onFocusChange;
-  final Color? iconColor; // 新增：自定义图标颜色
+  final Color? iconColor;
 
   const TVButton({
     super.key,
@@ -19,7 +19,7 @@ class TVButton extends StatefulWidget {
     this.isEnabled = true,
     this.isFocused = false,
     this.onFocusChange,
-    this.iconColor, // 新增：自定义图标颜色参数
+    this.iconColor,
   });
 
   @override
@@ -52,8 +52,6 @@ class _TVButtonState extends State<TVButton> {
     final colorScheme = theme.colorScheme;
     
     return Container(
-      width: 160,
-      height: 120,
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(16),
         border: Border.all(
@@ -98,32 +96,38 @@ class _TVButtonState extends State<TVButton> {
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 // 图标
-                Icon(
-                  widget.icon,
-                  size: 36,
-                  color: widget.isEnabled
-                      ? (widget.iconColor ?? // 优先使用自定义颜色
-                          (widget.isFocused 
-                              ? colorScheme.primary 
-                              : colorScheme.onSurface))
-                      : colorScheme.onSurface.withOpacity(0.4),
+                Expanded(
+                  flex: 2,
+                  child: Icon(
+                    widget.icon,
+                    size: 36,
+                    color: widget.isEnabled
+                        ? (widget.iconColor ?? // 优先使用自定义颜色
+                            (widget.isFocused
+                                ? colorScheme.primary
+                                : colorScheme.onSurface))
+                        : colorScheme.onSurface.withOpacity(0.4),
+                  ),
                 ),
                 const SizedBox(height: 8),
                 // 文字
-                Text(
-                  widget.title,
-                  textAlign: TextAlign.center,
-                  maxLines: 2,
-                  overflow: TextOverflow.ellipsis,
-                  style: theme.textTheme.titleMedium?.copyWith(
-                    color: widget.isEnabled
-                        ? (widget.isFocused 
-                            ? colorScheme.primary 
-                            : colorScheme.onSurface)
-                        : colorScheme.onSurface.withOpacity(0.4),
-                    fontWeight: widget.isFocused 
-                        ? FontWeight.w700 
-                        : FontWeight.w500,
+                Expanded(
+                  flex: 1,
+                  child: FittedBox(
+                    fit: BoxFit.scaleDown,
+                    child: Text(
+                      widget.title,
+                      textAlign: TextAlign.center,
+                      style: theme.textTheme.titleLarge?.copyWith(
+                        color: widget.isEnabled
+                            ? (widget.isFocused
+                                ? colorScheme.primary
+                                : colorScheme.onSurface)
+                            : colorScheme.onSurface.withOpacity(0.4),
+                        fontWeight:
+                            widget.isFocused ? FontWeight.w700 : FontWeight.w500,
+                      ),
+                    ),
                   ),
                 ),
               ],
@@ -141,13 +145,13 @@ class TVButtonData {
   final IconData icon;
   final VoidCallback? onPressed;
   final bool isEnabled;
-  final Color? iconColor; // 新增：自定义图标颜色
+  final Color? iconColor;
 
   const TVButtonData({
     required this.title,
     required this.icon,
     this.onPressed,
     this.isEnabled = true,
-    this.iconColor, // 新增：自定义图标颜色参数
+    this.iconColor,
   });
 }
