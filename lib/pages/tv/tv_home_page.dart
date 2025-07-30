@@ -296,7 +296,7 @@ class _TVHomePageState extends State<TVHomePage> with WidgetsBindingObserver {
                                           ),
                                           const SizedBox(height: 16),
                                           Text(
-                                            '• 方向键：切换按钮\n• 数字键：快速选择\n• 确认键：执行操作\n• 返回键：返回桌面\n• 设置中可切换主题',
+                                            '• 方向键：切换按钮\n• 数字键：快速选择\n• 确认键：执行操作\n• 返回键：返回桌面\n• 设置中可切换主题\n• 遥控按键如第一次\n  无效可再按一次',
                                             style: theme.textTheme.bodyMedium
                                                 ?.copyWith(
                                               color: colorScheme.onSurface

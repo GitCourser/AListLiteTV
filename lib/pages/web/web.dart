@@ -1,6 +1,7 @@
 import 'dart:developer';
 
 import 'package:alist_flutter/contant/native_bridge.dart';
+import 'package:alist_flutter/controllers/tv_controller.dart';
 import 'package:alist_flutter/generated_api.dart';
 import 'package:alist_flutter/utils/intent_utils.dart';
 import 'package:flutter/material.dart';
@@ -83,11 +84,13 @@ class WebScreenState extends State<WebScreen> {
     ]);
 
     return PopScope(
-        canPop: !_canGoBack,
+        canPop: true,
         onPopInvoked: (didPop) async {
           log("onPopInvoked $didPop");
           if (didPop) return;
-          _webViewController?.goBack();
+          // 直接返回到TV主页而不是网页的上一页
+          final tvController = Get.find<TVController>();
+          tvController.navigateBackToTVHome();
         },
         child: Scaffold(
           body: Column(children: <Widget>[

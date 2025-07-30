@@ -1,13 +1,13 @@
 #!/bin/bash
 
-GIT_REPO="https://github.com/GitCourser/AlistLite.git"
+GIT_REPO="GitCourser/AlistLite"
 
 function to_int() {
     echo $(echo "$1" | grep -oE '[0-9]+' | tr -d '\n')
 }
 
 function get_latest_version() {
-    echo $(git -c 'versionsort.suffix=-' ls-remote --exit-code --refs --sort='version:refname' --tags $GIT_REPO | tail --lines=1 | cut --delimiter='/' --fields=3)
+    echo $(curl -s "https://api.github.com/repos/$GIT_REPO/releases/latest" | jq -r '.tag_name')
 }
 
 LATEST_VER=""
@@ -30,21 +30,11 @@ done
 
 LATEST_VER_INT=$(to_int "$LATEST_VER")
 echo "Latest AlistLite version $LATEST_VER ${LATEST_VER_INT}"
-
 echo "alist_version=$LATEST_VER" >> "$GITHUB_ENV"
-# VERSION_FILE="$GITHUB_WORKSPACE/alist_version.txt"
 
 VER=$(cat "$VERSION_FILE")
-
-if [ -z "$VER" ]; then
-  VER="v3.25.1"
-  echo "No version file, use default version ${VER}"
-fi
-
 VER_INT=$(to_int $VER)
-
 echo "Current AlistLite version: $VER ${VER_INT}"
-
 
 if [ "$VER_INT" -ge "$LATEST_VER_INT" ]; then
     echo "Current >= Latest"

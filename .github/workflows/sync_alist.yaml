@@ -1,14 +1,14 @@
-name: CheckAList
+name: CheckAListLite
 
 on:
-  schedule:
-    - cron: "0 5,17 * * *" # 每日5点和17点执行
+  # schedule:
+  #   - cron: "0 5,17 * * *" # 每日5点和17点执行
+  # push:
+  #   branches:
+  #     - "master"
+  #   paths:
+  #     - "sync_alist.yaml"  
   workflow_dispatch:
-  push:
-    branches:
-      - "master"
-    paths:
-      - "sync_alist.yaml"  
 
 jobs:
   build:
@@ -21,34 +21,33 @@ jobs:
           cd $GITHUB_WORKSPACE/.github/scripts
           chmod +x ./*.sh
 
-          touch ${{ env.VERSION_FILE }}
+          if ! [ -s "$VERSION_FILE" ]; then
+            echo "3.45.1" > "$VERSION_FILE"
+          fi
+
           ./check_alist.sh
 
-      - name: Shell
+      - name: Check AListLite Update
         run: |
-          echo "alist_version=${{ env.alist_version }}"
-          echo "alist_update=${{ env.alist_update }}" 
-
-          # 用于测试
-          # echo "alist_update=1" >> $GITHUB_ENV 
-
-          if [ ${{ env.alist_update }} -eq 0 ]
-          then
+          if [ "$alist_update" -eq 0 ]; then
             echo "无更新"
           else
-            echo -e "[自动同步AList] ${{ env.alist_version }}" > $GITHUB_WORKSPACE/CHANGELOG.md
-            echo -e "${{ env.alist_version }}" > ${{ env.VERSION_FILE }}
+            echo -e "[自动同步AListLite] $alist_version" > $GITHUB_WORKSPACE/CHANGELOG.md
+            echo -e "$alist_version" > "$VERSION_FILE"
 
             git config user.name "github-actions"
             git config user.email "18594370+GitCourser@users.noreply.github.com"
             git add .
-            git commit -m "[bot] Update alist to ${{ env.alist_version }}"
+            git commit -m "[bot] Update alist to $alist_version"
             git push
           fi
+        env:
+          alist_version: ${{ env.alist_version }}
+          alist_update: ${{ env.alist_update }}
 
       - name: Run workflow release
         if: env.alist_update == 1 && ( success() || failure() )
         run: |
           gh workflow run release.yaml -R GitCourser/AListLiteTV
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
