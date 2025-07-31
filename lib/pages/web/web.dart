@@ -69,6 +69,11 @@ class WebScreenState extends State<WebScreen> {
 
   @override
   void dispose() {
+    // 重置方向设置，确保返回主页时能正确横屏
+    SystemChrome.setPreferredOrientations([
+      DeviceOrientation.landscapeLeft,
+      DeviceOrientation.landscapeRight,
+    ]);
     _webViewController?.dispose();
     super.dispose();
   }

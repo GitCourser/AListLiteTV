@@ -6,7 +6,8 @@ builtAt="$(date +'%F %T %z')"
 gitAuthor="Courser"
 # version=$(curl -s "https://api.github.com/repos/GitCourser/AlistLite/releases/latest" | jq -r '.tag_name')
 version=$(cat ../../alist_version)
-webVersion=$(curl -s "https://api.github.com/repos/GitCourser/alist-web/releases/latest" | jq -r '.tag_name') || webVersion="3.45.0"
+webVersion=$(curl -s "https://api.github.com/repos/GitCourser/alist-web/releases/latest" | jq -r '.tag_name')
+webVersion=${webVersion:-3.45.0}
 
 echo "backend version: $version"
 echo "frontend version: $webVersion"
