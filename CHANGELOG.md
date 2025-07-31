@@ -1,1 +1,1 @@
-[自动同步AListLite] 3.45.1
+[自动同步AListLite] 3.45.2
